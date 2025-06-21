@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Spiki Studio Recorder</title>
+  <title>Speaky Studio Recorder</title>
   <meta name="viewport" content="width=600">
   <style>
     body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; color: #222; padding: 30px; }
@@ -53,11 +53,16 @@
       .main-btn { font-size: 15px; padding: 9px 13px; }
       .save-btn { font-size: 15px; padding: 10px 18px; }
     }
+    /* For device selector */
+    .device-select-label { font-size: 1em; margin-right: 10px; font-weight: 500; }
+    .device-select { font-size: 1em; padding: 6px 8px; margin-bottom: 16px; border-radius: 5px; border: 1px solid #bbb; }
   </style>
 </head>
 <body>
-  <h1>Spiki Studio Recorder</h1>
+  <h1>Speaky Studio Recorder</h1>
   <div class="recorder-controls">
+    <label class="device-select-label" for="audioSource">Audio Input:</label>
+    <select id="audioSource" class="device-select"></select>
     <button id="recordBtn" class="main-btn">Record</button>
     <button id="stopBtn" class="main-btn" disabled>Stop</button>
     <button id="playAllBtn" class="main-btn" disabled>Play All</button>
@@ -102,7 +107,7 @@
 
   <script>
     // -- Recorder State --
-    let mediaRecorder, audioChunks = [], audioUrl = null, cues = [], recordingStartTime = 0, isSessionSaved = false;
+    let mediaRecorder, audioChunks = [], audioUrl = null, cues = [], recordingStartTime = 0, isSessionSaved = false, currentStream = null;
 
     const recordBtn = document.getElementById('recordBtn');
     const stopBtn = document.getElementById('stopBtn');
@@ -116,6 +121,7 @@
     const cueTableBody = cueTable.querySelector('tbody');
     const saveSessionBtn = document.getElementById('saveSessionBtn');
     const savedMsg = document.getElementById('savedMsg');
+    const audioSource = document.getElementById('audioSource');
 
     // Type map for color and icon
     const cueTypeMap = {
@@ -128,6 +134,28 @@
     // Order for grouped display after saving
     const cueTypeOrder = ['vocab','falsefriend','pronun','grammar'];
 
+    // Populate device selector
+    async function populateAudioDevices() {
+      audioSource.innerHTML = "";
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const inputs = devices.filter(d => d.kind === 'audioinput');
+        inputs.forEach(device => {
+          const opt = document.createElement('option');
+          opt.value = device.deviceId;
+          opt.text = device.label || `Microphone (${audioSource.length + 1})`;
+          audioSource.appendChild(opt);
+        });
+      } catch (e) {
+        const opt = document.createElement('option');
+        opt.value = "";
+        opt.text = "Microphone";
+        audioSource.appendChild(opt);
+      }
+    }
+    populateAudioDevices();
+    navigator.mediaDevices.addEventListener('devicechange', populateAudioDevices);
+
     // Disable cue buttons initially
     [cueFalseFriend, cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = true);
 
@@ -135,7 +163,14 @@
 
     recordBtn.onclick = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        // Stop previous stream if any
+        if (currentStream) {
+          currentStream.getTracks().forEach(track => track.stop());
+          currentStream = null;
+        }
+        const deviceId = audioSource.value;
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: deviceId ? { deviceId } : true });
+        currentStream = stream;
         mediaRecorder = new MediaRecorder(stream);
         audioChunks = [];
         cues = [];
@@ -172,10 +207,12 @@
     };
 
     stopBtn.onclick = () => {
-      mediaRecorder.stop();
-      recordBtn.disabled = false;
-      stopBtn.disabled = true;
-      [cueFalseFriend, cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = true);
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.stop();
+        recordBtn.disabled = false;
+        stopBtn.disabled = true;
+        [cueFalseFriend, cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = true);
+      }
     };
 
     playAllBtn.onclick = () => {
