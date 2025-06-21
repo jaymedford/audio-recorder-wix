@@ -2,31 +2,58 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Simple Audio Recorder</title>
+  <title>Audio Recorder with Cues</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 16px; }
     button { margin: 4px; }
+    .cue-list { margin-top: 16px; }
+    .cue-btn { margin-left: 6px; }
   </style>
 </head>
 <body>
-  <h2>Audio Recorder</h2>
+  <h2>Audio Recorder with Cues</h2>
   <button id="recordBtn">Record</button>
   <button id="stopBtn" disabled>Stop</button>
   <button id="playBtn" disabled>Play</button>
+  <button id="cueBtn" disabled>Cue</button>
   <audio id="player" controls style="display:none; margin-top:12px;"></audio>
+  <div class="cue-list" id="cueList"></div>
   <script>
     let mediaRecorder, audioChunks = [], audioUrl = null;
+    let cueTimes = [];
+    let recordingStartTime = 0;
+    let cueBtnInterval = null;
 
     const recordBtn = document.getElementById('recordBtn');
     const stopBtn = document.getElementById('stopBtn');
     const playBtn = document.getElementById('playBtn');
+    const cueBtn = document.getElementById('cueBtn');
     const player = document.getElementById('player');
+    const cueList = document.getElementById('cueList');
+
+    function updateCueList() {
+      cueList.innerHTML = '';
+      if (cueTimes.length) {
+        cueList.innerHTML = '<b>Cues:</b><br>';
+        cueTimes.forEach((t, idx) => {
+          cueList.innerHTML += `Cue ${idx+1}: ${t.toFixed(2)}s <button class="cue-btn" onclick="jumpToCue(${t})">Go</button><br>`;
+        });
+      }
+    }
+
+    // Make jumpToCue globally accessible
+    window.jumpToCue = function(time) {
+      player.currentTime = time;
+      player.play();
+    }
 
     recordBtn.onclick = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorder = new MediaRecorder(stream);
       audioChunks = [];
       audioUrl = null;
+      cueTimes = [];
+      updateCueList();
 
       mediaRecorder.ondataavailable = event => {
         if (event.data.size > 0) audioChunks.push(event.data);
@@ -41,9 +68,11 @@
       };
 
       mediaRecorder.start();
+      recordingStartTime = Date.now();
       recordBtn.disabled = true;
       stopBtn.disabled = false;
       playBtn.disabled = true;
+      cueBtn.disabled = false;
       player.style.display = 'none';
     };
 
@@ -51,6 +80,7 @@
       mediaRecorder.stop();
       recordBtn.disabled = false;
       stopBtn.disabled = true;
+      cueBtn.disabled = true;
     };
 
     playBtn.onclick = () => {
@@ -58,6 +88,14 @@
         player.src = audioUrl;
         player.play();
       }
+    };
+
+    cueBtn.onclick = () => {
+      // Mark the cue at current recording time in seconds
+      const now = Date.now();
+      const cueTime = (now - recordingStartTime) / 1000;
+      cueTimes.push(cueTime);
+      updateCueList();
     };
   </script>
 </body>
