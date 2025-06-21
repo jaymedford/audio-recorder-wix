@@ -15,9 +15,9 @@
       --border: #e5e7eb;
       --text: #22262c;
       --muted: #8d99a8;
-      --cue-vocab: #44474d;
-      --cue-pronun: #4baf7a;
-      --cue-grammar: #b287ec;
+      --cue-vocab: #6d6f74;       /* Subtle charcoal */
+      --cue-pronun: #789e8a;      /* Muted green */
+      --cue-grammar: #9c8db2;     /* Subtle violet */
       --radius: 14px;
       --input-radius: 7px;
       --shadow: 0 4px 24px 0 rgba(44,51,56,0.08);
@@ -26,6 +26,7 @@
       --font-body: 'Inter', Arial, sans-serif;
       --table-head-bg: #f2f4f7;
       --cue-dot-size: 9px;
+      --cue-btn-gap: 14px;
     }
     html, body {
       height: 100%;
@@ -183,22 +184,25 @@
       font-weight: 700;
       color: var(--primary);
       font-size: 0.87em;
-      margin-bottom: 2px;
+      margin-bottom: 5px;
       display: block;
       font-family: var(--font-ui);
       letter-spacing: 0.02em;
+      text-align: center;
     }
     .cue-btn-group {
       display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
+      justify-content: center;
+      align-items: center;
+      gap: var(--cue-btn-gap);
       margin-bottom: 2px;
+      width: 100%;
     }
     .cue-btn {
-      padding: 2px 9px;
+      padding: 2.5px 13px;
       border: none;
       border-radius: 5px;
-      font-size: 0.83em;
+      font-size: 0.84em;
       font-family: var(--font-ui);
       font-weight: 600;
       color: #fff;
@@ -206,27 +210,37 @@
       background: var(--primary);
       box-shadow: 0 1px 3px rgba(44,51,56,0.03);
       outline: none;
-      min-width: 54px;
+      min-width: 60px;
       letter-spacing: 0.01em;
-      transition: background 0.13s, transform 0.13s;
+      transition: 
+        background 0.18s cubic-bezier(.4,0,.2,1),
+        transform 0.18s cubic-bezier(.4,0,.2,1),
+        box-shadow 0.18s cubic-bezier(.4,0,.2,1);
       position: relative;
       overflow: hidden;
       border-bottom: 2px solid transparent;
+      text-align: center;
+      display: inline-block;
     }
-    .cue-btn.cue-vocab      { background: #44474d; }
-    .cue-btn.cue-pronun     { background: #4baf7a; }
-    .cue-btn.cue-grammar    { background: #b287ec; color: #23272f;}
+    .cue-btn.cue-vocab      { background: var(--cue-vocab); }
+    .cue-btn.cue-pronun     { background: var(--cue-pronun); }
+    .cue-btn.cue-grammar    { background: var(--cue-grammar); color: #fff;}
     .cue-btn[disabled] {
-      opacity: 0.44;
+      opacity: 0.40;
       cursor: not-allowed;
     }
     .cue-btn:active:not([disabled]) {
       transform: scale(0.96);
     }
     .cue-btn:hover:not([disabled]) {
-      filter: brightness(1.07);
-      border-bottom: 2px solid #23272f11;
+      background: #ededf1;
+      color: var(--primary);
+      box-shadow: 0 3px 10px 0 rgba(44,51,56,0.07);
+      transform: translateY(-2px) scale(1.045);
     }
+    .cue-btn.cue-vocab:hover:not([disabled]) { background: #e6e6e8; color: #23272f; }
+    .cue-btn.cue-pronun:hover:not([disabled]) { background: #eaf3ee; color: #23272f; }
+    .cue-btn.cue-grammar:hover:not([disabled]) { background: #f1eaf8; color: #23272f; }
     .cue-btn i { display: none; }
     .cue-list-table {
       width: 100%;
@@ -350,7 +364,8 @@
     <div class="logo-holder">
       <img src="https://static.wixstatic.com/media/083adc_93c9141d93dd49b28eee10d3b3dfe013~mv2.png" alt="SPIKI Logo" />
     </div>
-    <div class="subtitle"> Session Recorder &amp;  Cues</div>
+    <h1>SPIKI Studio</h1>
+    <div class="subtitle">Professional Session Recorder &amp; Feedback Cues</div>
     <form class="recorder-controls" onsubmit="return false;">
       <label class="device-select-label" for="audioSource">Audio Input:</label>
       <select id="audioSource" class="device-select"></select>
@@ -411,9 +426,9 @@
     const audioSource = document.getElementById('audioSource');
 
     const cueTypeMap = {
-      vocab:   {label:'Vocabulary',   color:'#44474d'},
-      pronun:  {label:'Pronunciation',color:'#4baf7a'},
-      grammar: {label:'Grammar',      color:'#b287ec'}
+      vocab:   {label:'Vocabulary',   color:'#6d6f74'},
+      pronun:  {label:'Pronunciation',color:'#789e8a'},
+      grammar: {label:'Grammar',      color:'#9c8db2'}
     };
     const cueTypeOrder = ['vocab','pronun','grammar'];
 
