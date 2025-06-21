@@ -2,101 +2,288 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Audio Recorder with Cues</title>
+  <title>Speaky Studio Recorder</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 16px; }
-    button { margin: 4px; }
-    .cue-list { margin-top: 16px; }
-    .cue-btn { margin-left: 6px; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; color: #222; padding: 30px; }
+    .recorder-controls { margin-bottom: 20px; }
+    .cue-btn {
+      padding: 10px 14px; margin: 0 6px 8px 0; border: none; border-radius: 6px; color: #fff; font-size: 16px; cursor: pointer;
+      display: inline-flex; align-items: center; font-family: inherit;
+      transition: filter 0.2s;
+    }
+    .cue-btn:active { filter: brightness(0.9); }
+    .cue-falsefriend { background: #ff9800; }
+    .cue-vocab       { background: #1976d2; }
+    .cue-pronun      { background: #43a047; }
+    .cue-grammar     { background: #7e57c2; }
+    .cue-btn i { margin-right: 6px; font-style: normal; }
+    .main-btn { padding: 12px 20px; font-size: 18px; margin-right: 10px; border-radius: 6px; border: none; background: #eee; color: #222; cursor: pointer; }
+    .main-btn[disabled] { background: #ccc; cursor: not-allowed; }
+    .audio-section { margin: 16px 0 32px 0; }
+    .cue-list-table { width: 100%; border-collapse: collapse; margin-top: 18px; background: #fff; border-radius: 8px; overflow: hidden; }
+    .cue-list-table th, .cue-list-table td { padding: 10px 8px; border-bottom: 1px solid #f0f0f0; text-align: left; }
+    .cue-list-table th { background: #f5f7fa; }
+    .cue-type-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 6px; }
+    .cue-note-input { width: 98%; min-width: 80px; max-width: 340px; }
+    .cue-play-btn {
+      background: #1976d2; color: #fff; border: none; border-radius: 5px; padding: 5px 12px; font-size: 15px; cursor: pointer;
+      transition: filter 0.2s;
+    }
+    .cue-play-btn:active { filter: brightness(0.9);}
+    .session-actions { margin-top: 24px; }
+    .save-btn {
+      padding: 14px 30px; font-size: 19px; background: #43a047; color: #fff; border-radius: 8px; border: none; cursor: pointer;
+      font-weight: bold; letter-spacing: 1px; margin-top: 12px;
+      transition: background 0.2s;
+    }
+    .save-btn:active { background: #357a38; }
+    .saved-msg { color: #4caf50; font-weight: bold; font-size: 17px; margin-left: 18px; }
+    @media (max-width: 750px) {
+      .cue-list-table, .cue-list-table th, .cue-list-table td { font-size: 13px; }
+      .main-btn { font-size: 15px; padding: 9px 13px; }
+      .save-btn { font-size: 15px; padding: 10px 18px; }
+    }
   </style>
 </head>
 <body>
-  <h2>Audio Recorder with Cues</h2>
-  <button id="recordBtn">Record</button>
-  <button id="stopBtn" disabled>Stop</button>
-  <button id="playBtn" disabled>Play</button>
-  <button id="cueBtn" disabled>Cue</button>
-  <audio id="player" controls style="display:none; margin-top:12px;"></audio>
-  <div class="cue-list" id="cueList"></div>
+  <h1>Speaky Studio Recorder</h1>
+  <div class="recorder-controls">
+    <button id="recordBtn" class="main-btn">Record</button>
+    <button id="stopBtn" class="main-btn" disabled>Stop</button>
+    <button id="playAllBtn" class="main-btn" disabled>Play All</button>
+  </div>
+
+  <div class="audio-section">
+    <audio id="player" controls style="width:100%; max-width:340px; display:none;"></audio>
+  </div>
+
+  <div>
+    <strong>Add a Cue:</strong><br>
+    <button class="cue-btn cue-falsefriend" id="cueFalseFriend" title="Mark a False Friend">
+      <i>🤔</i> False Friend
+    </button>
+    <button class="cue-btn cue-vocab" id="cueVocab" title="Mark a Vocabulary Opportunity">
+      <i>📖</i> Vocabulary
+    </button>
+    <button class="cue-btn cue-pronun" id="cuePronun" title="Mark a Pronunciation Opportunity">
+      <i>🗣️</i> Pronunciation
+    </button>
+    <button class="cue-btn cue-grammar" id="cueGrammar" title="Mark a Grammar Opportunity">
+      <i>✍️</i> Grammar
+    </button>
+  </div>
+
+  <table class="cue-list-table" id="cueTable" style="display:none;">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Time</th>
+        <th>Notes</th>
+        <th>Play</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="session-actions">
+    <button class="save-btn" id="saveSessionBtn" style="display:none;">Save Session</button>
+    <span id="savedMsg" class="saved-msg" style="display:none;">Session saved!</span>
+  </div>
+
   <script>
-    let mediaRecorder, audioChunks = [], audioUrl = null;
-    let cueTimes = [];
-    let recordingStartTime = 0;
-    let cueBtnInterval = null;
+    // -- Recorder State --
+    let mediaRecorder, audioChunks = [], audioUrl = null, cues = [], recordingStartTime = 0, isSessionSaved = false;
 
     const recordBtn = document.getElementById('recordBtn');
     const stopBtn = document.getElementById('stopBtn');
-    const playBtn = document.getElementById('playBtn');
-    const cueBtn = document.getElementById('cueBtn');
+    const playAllBtn = document.getElementById('playAllBtn');
+    const cueFalseFriend = document.getElementById('cueFalseFriend');
+    const cueVocab = document.getElementById('cueVocab');
+    const cuePronun = document.getElementById('cuePronun');
+    const cueGrammar = document.getElementById('cueGrammar');
     const player = document.getElementById('player');
-    const cueList = document.getElementById('cueList');
+    const cueTable = document.getElementById('cueTable');
+    const cueTableBody = cueTable.querySelector('tbody');
+    const saveSessionBtn = document.getElementById('saveSessionBtn');
+    const savedMsg = document.getElementById('savedMsg');
 
-    function updateCueList() {
-      cueList.innerHTML = '';
-      if (cueTimes.length) {
-        cueList.innerHTML = '<b>Cues:</b><br>';
-        cueTimes.forEach((t, idx) => {
-          cueList.innerHTML += `Cue ${idx+1}: ${t.toFixed(2)}s <button class="cue-btn" onclick="jumpToCue(${t})">Go</button><br>`;
-        });
-      }
-    }
+    // Type map for color and icon
+    const cueTypeMap = {
+      falsefriend: {label:'False Friend', color:'#ff9800', icon:'🤔'},
+      vocab:       {label:'Vocabulary',   color:'#1976d2', icon:'📖'},
+      pronun:      {label:'Pronunciation',color:'#43a047', icon:'🗣️'},
+      grammar:     {label:'Grammar',      color:'#7e57c2', icon:'✍️'}
+    };
 
-    // Make jumpToCue globally accessible
-    window.jumpToCue = function(time) {
-      player.currentTime = time;
-      player.play();
-    }
+    // Disable cue buttons initially
+    [cueFalseFriend, cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = true);
+
+    // -- Recording Controls --
 
     recordBtn.onclick = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder = new MediaRecorder(stream);
-      audioChunks = [];
-      audioUrl = null;
-      cueTimes = [];
-      updateCueList();
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        cues = [];
+        audioUrl = null;
+        isSessionSaved = false;
+        updateCueTable();
+        player.style.display = 'none';
+        playAllBtn.disabled = true;
+        saveSessionBtn.style.display = 'none';
+        savedMsg.style.display = 'none';
 
-      mediaRecorder.ondataavailable = event => {
-        if (event.data.size > 0) audioChunks.push(event.data);
-      };
+        mediaRecorder.ondataavailable = event => {
+          if (event.data.size > 0) audioChunks.push(event.data);
+        };
 
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(audioChunks, { type: 'audio/webm' });
-        audioUrl = URL.createObjectURL(blob);
-        player.src = audioUrl;
-        player.style.display = '';
-        playBtn.disabled = false;
-      };
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(audioChunks, { type: 'audio/webm' });
+          audioUrl = URL.createObjectURL(blob);
+          player.src = audioUrl;
+          player.style.display = '';
+          playAllBtn.disabled = false;
+          saveSessionBtn.style.display = '';
+        };
 
-      mediaRecorder.start();
-      recordingStartTime = Date.now();
-      recordBtn.disabled = true;
-      stopBtn.disabled = false;
-      playBtn.disabled = true;
-      cueBtn.disabled = false;
-      player.style.display = 'none';
+        mediaRecorder.start();
+        recordingStartTime = Date.now();
+        recordBtn.disabled = true;
+        stopBtn.disabled = false;
+        [cueFalseFriend, cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = false);
+
+      } catch (err) {
+        alert('Microphone access is required to record audio.');
+      }
     };
 
     stopBtn.onclick = () => {
       mediaRecorder.stop();
       recordBtn.disabled = false;
       stopBtn.disabled = true;
-      cueBtn.disabled = true;
+      [cueFalseFriend, cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = true);
     };
 
-    playBtn.onclick = () => {
+    playAllBtn.onclick = () => {
       if(audioUrl) {
         player.src = audioUrl;
         player.play();
       }
     };
 
-    cueBtn.onclick = () => {
-      // Mark the cue at current recording time in seconds
+    // -- Cue Buttons Handlers --
+
+    function addCue(type) {
+      if (!mediaRecorder || mediaRecorder.state !== 'recording') return;
       const now = Date.now();
       const cueTime = (now - recordingStartTime) / 1000;
-      cueTimes.push(cueTime);
-      updateCueList();
+      cues.push({
+        type,
+        time: cueTime,
+        note: ''
+      });
+      updateCueTable();
+    }
+
+    cueFalseFriend.onclick = () => addCue('falsefriend');
+    cueVocab.onclick       = () => addCue('vocab');
+    cuePronun.onclick      = () => addCue('pronun');
+    cueGrammar.onclick     = () => addCue('grammar');
+
+    // -- Cue Table Rendering --
+
+    function updateCueTable() {
+      cueTableBody.innerHTML = '';
+      if (cues.length === 0) {
+        cueTable.style.display = 'none';
+        return;
+      }
+      cueTable.style.display = '';
+      cues.forEach((cue, idx) => {
+        const tr = document.createElement('tr');
+
+        // Type cell with color dot & icon
+        const typeCell = document.createElement('td');
+        typeCell.innerHTML = `
+          <span class="cue-type-dot" style="background:${cueTypeMap[cue.type].color}"></span>
+          <span title="${cueTypeMap[cue.type].label}">${cueTypeMap[cue.type].icon}</span>
+          <span> ${cueTypeMap[cue.type].label}</span>
+        `;
+        tr.appendChild(typeCell);
+
+        // Time cell
+        const timeCell = document.createElement('td');
+        timeCell.textContent = cue.time.toFixed(2) + 's';
+        tr.appendChild(timeCell);
+
+        // Notes cell
+        const noteCell = document.createElement('td');
+        if (!isSessionSaved) {
+          const textarea = document.createElement('textarea');
+          textarea.className = 'cue-note-input';
+          textarea.rows = 1;
+          textarea.placeholder = "Type notes (optional)...";
+          textarea.value = cue.note;
+          textarea.oninput = (e) => {
+            cues[idx].note = e.target.value;
+          };
+          noteCell.appendChild(textarea);
+        } else {
+          noteCell.textContent = cue.note || '—';
+        }
+        tr.appendChild(noteCell);
+
+        // Play cue cell
+        const playCell = document.createElement('td');
+        const playBtn = document.createElement('button');
+        playBtn.className = 'cue-play-btn';
+        playBtn.textContent = '▶';
+        playBtn.disabled = !audioUrl;
+        playBtn.onclick = () => {
+          if(audioUrl) {
+            player.src = audioUrl;
+            player.currentTime = cue.time;
+            player.play();
+          }
+        };
+        playCell.appendChild(playBtn);
+        tr.appendChild(playCell);
+
+        cueTableBody.appendChild(tr);
+      });
+    }
+
+    // -- Save Session Handler --
+
+    saveSessionBtn.onclick = async () => {
+      if (!audioUrl || isSessionSaved) return;
+      // Disable editing
+      isSessionSaved = true;
+      updateCueTable();
+
+      // Prepare audio blob and cues for upload
+      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+
+      // --- TODO: Integrate with Wix Velo for saving ---
+      // Example: Use Wix Data API to upload audioBlob and cues array (as JSON) to your database.
+      // See: https://www.wix.com/velo/reference/wix-data and https://www.wix.com/velo/reference/wix-media-backend/upload
+      // You would typically use wix-data.insert() for cues+notes, and wix-media-backend/upload to store the audio file.
+      // Pass audioBlob and cues to your backend accordingly.
+      // For now, just show saved message.
+
+      savedMsg.style.display = '';
+      saveSessionBtn.disabled = true;
     };
+
+    // -- Reset Save Message on new recordings --
+    recordBtn.addEventListener('click', () => {
+      saveSessionBtn.disabled = false;
+      savedMsg.style.display = 'none';
+    });
+
+    // -- Initial UI update --
+    updateCueTable();
   </script>
 </body>
 </html>
