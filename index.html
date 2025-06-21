@@ -4,29 +4,32 @@
   <meta charset="UTF-8">
   <title>SPIKI Studio Recorder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Professional Fonts: DM Sans for headers/UI, Inter for body -->
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Fonts: DM Sans for UI, Inter for body, plus IBM Plex Sans Condensed for buttons -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Inter:wght@400;500;700&family=IBM+Plex+Sans+Condensed:wght@500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #23272f;
+      --primary: #26282c;
       --accent: #4baf7a;
       --surface: #fff;
       --surface-alt: #f6f7f9;
       --border: #e5e7eb;
-      --text: #22262c;
+      --text: #23272f;
       --muted: #8d99a8;
-      --cue-vocab: #6d6f74;       /* Subtle charcoal */
-      --cue-pronun: #789e8a;      /* Muted green */
-      --cue-grammar: #9c8db2;     /* Subtle violet */
-      --radius: 14px;
-      --input-radius: 7px;
-      --shadow: 0 4px 24px 0 rgba(44,51,56,0.08);
-      --transition: 0.17s cubic-bezier(.4,0,.2,1);
+      --cue-vocab: #595b60;
+      --cue-pronun: #7a8b88;
+      --cue-grammar: #9c8db2;
+      --cue-correct: #5ba95c;
+      --cue-correct-bg: #e7f6e8;
+      --radius: 13px;
+      --input-radius: 6px;
+      --shadow: 0 3.5px 18px 0 rgba(44,51,56,0.07);
+      --transition: 0.16s cubic-bezier(.4,0,.2,1);
       --font-ui: 'DM Sans', Arial, sans-serif;
+      --font-cond: 'IBM Plex Sans Condensed', Arial, sans-serif;
       --font-body: 'Inter', Arial, sans-serif;
-      --table-head-bg: #f2f4f7;
-      --cue-dot-size: 9px;
-      --cue-btn-gap: 14px;
+      --table-head-bg: #f1f2f4;
+      --cue-dot-size: 8px;
+      --cue-btn-gap: 13px;
     }
     html, body {
       height: 100%;
@@ -46,10 +49,10 @@
       background: var(--surface);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 28px 18px 18px 18px;
+      padding: 28px 14px 16px 14px;
       max-width: 370px;
       width: 100%;
-      margin: 38px auto 12px auto;
+      margin: 35px auto 10px auto;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -57,101 +60,102 @@
       animation: fadeIn 0.7s cubic-bezier(.3,1.5,.5,1.1);
     }
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(22px) scale(0.97);}
+      from { opacity: 0; transform: translateY(18px) scale(0.98);}
       to   { opacity: 1; transform: none;}
     }
     .logo-holder {
-      margin-bottom: 11px;
+      margin-bottom: 10px;
       width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
     }
     .logo-holder img {
-      height: 36px;
+      height: 32px;
       width: auto;
       border-radius: 0;
       box-shadow: none;
       background: none;
       display: block;
-      max-width: 140px;
+      max-width: 120px;
       object-fit: contain;
     }
     h1 {
       font-family: var(--font-ui);
-      font-size: 1.13rem;
+      font-size: 1.09rem;
       margin: 0 0 6px 0;
       font-weight: 700;
-      letter-spacing: 0.7px;
+      letter-spacing: 0.6px;
       color: var(--primary);
       text-align: center;
-      line-height: 1.14;
+      line-height: 1.13;
     }
     .subtitle {
       font-family: var(--font-ui);
-      font-size: 0.91rem;
+      font-size: 0.89rem;
       color: var(--muted);
-      margin-bottom: 12px;
+      margin-bottom: 11px;
       text-align: center;
-      letter-spacing: 0.21px;
+      letter-spacing: 0.20px;
       font-weight: 500;
     }
     .recorder-controls {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 5px;
       justify-content: center;
-      margin-bottom: 10px;
+      margin-bottom: 9px;
       align-items: center;
       width: 100%;
     }
     .device-select-label {
-      font-size: 0.89em;
-      margin-right: 4px;
+      font-size: 0.86em;
+      margin-right: 3px;
       font-weight: 600;
       color: var(--primary);
-      letter-spacing: 0.02px;
+      letter-spacing: .01px;
       font-family: var(--font-ui);
     }
     .device-select {
-      font-size: 0.89em;
+      font-size: 0.85em;
       font-family: var(--font-ui);
-      padding: 4px 7px;
+      padding: 3px 7px;
       border-radius: var(--input-radius);
       border: 1px solid var(--border);
-      background: #f3f4f6;
+      background: #f4f5f7;
       color: var(--primary);
       transition: border var(--transition), box-shadow var(--transition);
       outline: none;
-      margin-right: 2px;
-      min-width: 80px;
+      margin-right: 1px;
+      min-width: 70px;
     }
     .device-select:focus {
-      border: 1.2px solid var(--primary);
-      box-shadow: 0 1.5px 5px rgba(44,51,56,0.09);
+      border: 1.1px solid var(--primary);
+      box-shadow: 0 1.5px 5px rgba(44,51,56,0.08);
     }
     .main-btn {
-      padding: 3px 11px;
-      font-size: 0.87rem;
-      border-radius: 6px;
+      padding: 2.5px 9px;
+      font-size: 0.81rem;
+      border-radius: 5px;
       border: none;
-      font-family: var(--font-ui);
+      font-family: var(--font-cond);
       background: var(--primary);
       color: #fff;
       font-weight: 700;
-      box-shadow: 0 1px 4px rgba(44,51,56,0.06);
+      box-shadow: 0 1px 3px rgba(44,51,56,0.05);
       cursor: pointer;
       margin-bottom: 1px;
       letter-spacing: 0.01em;
       transition: background var(--transition), box-shadow var(--transition), transform 0.13s;
       outline: none;
+      text-transform: uppercase;
     }
     .main-btn[disabled] {
       background: #b8bec7;
       color: #eee;
       cursor: not-allowed;
       box-shadow: none;
-      opacity: 0.6;
+      opacity: 0.55;
     }
     .main-btn:active:not([disabled]) {
       transform: scale(0.98);
@@ -183,7 +187,7 @@
     .cue-label {
       font-weight: 700;
       color: var(--primary);
-      font-size: 0.87em;
+      font-size: 0.85em;
       margin-bottom: 5px;
       display: block;
       font-family: var(--font-ui);
@@ -199,34 +203,53 @@
       width: 100%;
     }
     .cue-btn {
-      padding: 2.5px 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 11px;
       border: none;
-      border-radius: 5px;
-      font-size: 0.84em;
-      font-family: var(--font-ui);
-      font-weight: 600;
+      border-radius: 4.5px;
+      font-size: 0.82em;
+      font-family: var(--font-cond);
+      font-weight: 700;
       color: #fff;
       cursor: pointer;
       background: var(--primary);
-      box-shadow: 0 1px 3px rgba(44,51,56,0.03);
+      box-shadow: 0 1px 2.5px rgba(44,51,56,0.03);
       outline: none;
-      min-width: 60px;
-      letter-spacing: 0.01em;
+      min-width: 43px;
+      min-height: 23px;
+      letter-spacing: 0.02em;
       transition: 
-        background 0.18s cubic-bezier(.4,0,.2,1),
-        transform 0.18s cubic-bezier(.4,0,.2,1),
+        background 0.19s cubic-bezier(.4,0,.2,1),
+        color 0.18s cubic-bezier(.4,0,.2,1),
+        transform 0.19s cubic-bezier(.4,0,.2,1),
         box-shadow 0.18s cubic-bezier(.4,0,.2,1);
-      position: relative;
-      overflow: hidden;
       border-bottom: 2px solid transparent;
       text-align: center;
-      display: inline-block;
+      user-select: none;
+      margin: 0;
+      will-change: transform, background;
     }
-    .cue-btn.cue-vocab      { background: var(--cue-vocab); }
-    .cue-btn.cue-pronun     { background: var(--cue-pronun); }
-    .cue-btn.cue-grammar    { background: var(--cue-grammar); color: #fff;}
+    .cue-btn.cue-vocab   { background: var(--cue-vocab);}
+    .cue-btn.cue-pronun  { background: var(--cue-pronun);}
+    .cue-btn.cue-grammar { background: var(--cue-grammar);}
+    .cue-btn.cue-correct { 
+      background: var(--cue-correct-bg); 
+      color: var(--cue-correct); 
+      font-size: 1.1em;
+      min-width: 25px;
+      padding: 2px 6px;
+      border: 1.5px solid var(--cue-correct);
+      position: relative;
+    }
+    .cue-btn.cue-correct svg {
+      display: block;
+      width: 16px; height: 16px;
+      margin: 0;
+    }
     .cue-btn[disabled] {
-      opacity: 0.40;
+      opacity: 0.36;
       cursor: not-allowed;
     }
     .cue-btn:active:not([disabled]) {
@@ -236,11 +259,19 @@
       background: #ededf1;
       color: var(--primary);
       box-shadow: 0 3px 10px 0 rgba(44,51,56,0.07);
-      transform: translateY(-2px) scale(1.045);
+      transform: translateY(-1.5px) scale(1.045);
+      z-index: 1;
     }
-    .cue-btn.cue-vocab:hover:not([disabled]) { background: #e6e6e8; color: #23272f; }
-    .cue-btn.cue-pronun:hover:not([disabled]) { background: #eaf3ee; color: #23272f; }
-    .cue-btn.cue-grammar:hover:not([disabled]) { background: #f1eaf8; color: #23272f; }
+    .cue-btn.cue-vocab:hover:not([disabled]) { background: #e6e6e8; color: #595b60; }
+    .cue-btn.cue-pronun:hover:not([disabled]) { background: #eaf3ee; color: #789e8a;}
+    .cue-btn.cue-grammar:hover:not([disabled]) { background: #f1eaf8; color: #9c8db2;}
+    .cue-btn.cue-correct:hover:not([disabled]) { 
+      background: var(--cue-correct-bg); 
+      color: #357d3a;
+      border-color: #357d3a;
+      box-shadow: 0 3px 10px 0 rgba(91,169,92,0.09);
+      transform: translateY(-1.5px) scale(1.11);
+    }
     .cue-btn i { display: none; }
     .cue-list-table {
       width: 100%;
@@ -251,7 +282,7 @@
       border-radius: 6px;
       overflow: hidden;
       box-shadow: 0 1px 6px rgba(44,51,56,0.03);
-      font-size: 0.86em;
+      font-size: 0.83em;
       animation: fadeIn 0.7s 0.11s backwards;
     }
     .cue-list-table th, .cue-list-table td {
@@ -259,11 +290,11 @@
       border-bottom: 1px solid #e5e7eb;
       text-align: left;
       font-family: var(--font-body);
-      font-size: 0.87em;
+      font-size: 0.84em;
     }
     .cue-list-table th {
       background: var(--table-head-bg);
-      font-size: 0.89em;
+      font-size: 0.86em;
       font-weight: 700;
       color: var(--primary);
       letter-spacing: 0.01em;
@@ -275,18 +306,28 @@
       width: var(--cue-dot-size); height: var(--cue-dot-size);
       border-radius: 50%;
       vertical-align: middle;
-      margin-right: 5px;
+      margin-right: 4px;
       margin-left: 1px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.07);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+    .cue-type-dot.cue-correct-dot {
+      background: var(--cue-correct);
+      width: 10px; height: 10px;
+      margin-right: 3px;
+      box-shadow: 0 0.5px 2px #5ba95c33;
     }
     .cue-type-label {
       font-weight: 600;
-      font-family: var(--font-ui);
-      font-size: 0.98em;
+      font-family: var(--font-cond);
+      font-size: 0.97em;
+      letter-spacing: 0.01em;
+      color: var(--primary);
+      text-transform: uppercase;
     }
+    .cue-type-label.cue-correct-label { color: var(--cue-correct); }
     .cue-note-input {
       width: 97%; min-width: 40px; max-width: 100px;
-      font-size: 0.87em; border-radius: 4px; border: 1px solid #c6d3e6;
+      font-size: 0.85em; border-radius: 4px; border: 1px solid #c6d3e6;
       padding: 2px 4px; background: #f6f8fd; transition: border var(--transition);
       resize: vertical;
       margin-top: 0.5px;
@@ -318,7 +359,7 @@
     .cue-category-header {
       background: #f0f1f4;
       font-weight: bold;
-      font-size: 0.92em;
+      font-size: 0.90em;
       letter-spacing: 0.3px;
       padding: 6px 4px;
       border-bottom: 2px solid #e5e7eb;
@@ -331,7 +372,7 @@
       text-align: center;
     }
     .save-btn {
-      padding: 3px 15px; font-size: 0.92em; background: var(--accent);
+      padding: 3px 15px; font-size: 0.91em; background: var(--accent);
       color: #fff; border-radius: 6px; border: none; cursor: pointer;
       font-family: var(--font-ui);
       font-weight: 700; letter-spacing: 0.01em; margin-top: 4px;
@@ -343,19 +384,19 @@
     .save-btn[disabled] { background: #a6d4b0; color: #e0e5ed; }
     .saved-msg { color: #4baf7a; font-weight: 600; font-size: 0.92em; margin-left: 5px; }
     .footer {
-      margin-top: 13px;
+      margin-top: 12px;
       color: #909caf;
-      font-size: 0.86em;
+      font-size: 0.83em;
       text-align: center;
       letter-spacing: 0.02em;
       font-family: var(--font-ui);
     }
     @media (max-width:500px) {
       .studio-wrapper { max-width: 99vw; padding: 4px 1vw 4px 1vw;}
-      .cue-list-table th, .cue-list-table td { font-size: 0.81em; padding: 3px 2vw;}
-      .main-btn, .save-btn { font-size: 0.87em; padding: 2px 7px;}
-      h1 { font-size: 1.01em; }
-      .logo-holder img { max-width: 90px; height: 23px; }
+      .cue-list-table th, .cue-list-table td { font-size: 0.79em; padding: 3px 2vw;}
+      .main-btn, .save-btn { font-size: 0.83em; padding: 2px 7px;}
+      h1 { font-size: 0.97em; }
+      .logo-holder img { max-width: 80px; height: 20px; }
     }
   </style>
 </head>
@@ -379,14 +420,11 @@
     <div class="cue-section">
       <span class="cue-label">Add a Cue:</span>
       <div class="cue-btn-group">
-        <button class="cue-btn cue-vocab" id="cueVocab" title="Mark a Vocabulary Opportunity" type="button">
-          Vocabulary
-        </button>
-        <button class="cue-btn cue-pronun" id="cuePronun" title="Mark a Pronunciation Opportunity" type="button">
-          Pronunciation
-        </button>
-        <button class="cue-btn cue-grammar" id="cueGrammar" title="Mark a Grammar Opportunity" type="button">
-          Grammar
+        <button class="cue-btn cue-vocab" id="cueVocab" title="Vocabulary Opportunity" type="button">vocab</button>
+        <button class="cue-btn cue-pronun" id="cuePronun" title="Pronunciation Opportunity" type="button">pron</button>
+        <button class="cue-btn cue-grammar" id="cueGrammar" title="Grammar Opportunity" type="button">grammar</button>
+        <button class="cue-btn cue-correct" id="cueCorrect" title="Correct/Positive Cue" type="button" aria-label="Add Positive Cue">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M5 10.5l4 4 6-8" stroke="#5ba95c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </div>
     </div>
@@ -418,6 +456,7 @@
     const cueVocab = document.getElementById('cueVocab');
     const cuePronun = document.getElementById('cuePronun');
     const cueGrammar = document.getElementById('cueGrammar');
+    const cueCorrect = document.getElementById('cueCorrect');
     const player = document.getElementById('player');
     const cueTable = document.getElementById('cueTable');
     const cueTableBody = cueTable.querySelector('tbody');
@@ -426,11 +465,12 @@
     const audioSource = document.getElementById('audioSource');
 
     const cueTypeMap = {
-      vocab:   {label:'Vocabulary',   color:'#6d6f74'},
-      pronun:  {label:'Pronunciation',color:'#789e8a'},
-      grammar: {label:'Grammar',      color:'#9c8db2'}
+      vocab:   {label:'vocab',      color:'#595b60'},
+      pronun:  {label:'pron',       color:'#7a8b88'},
+      grammar: {label:'grammar',    color:'#9c8db2'},
+      correct: {label:'',           color:'#5ba95c', icon:true}
     };
-    const cueTypeOrder = ['vocab','pronun','grammar'];
+    const cueTypeOrder = ['vocab','pronun','grammar','correct'];
 
     // --- Device Selector Logic ---
     async function populateAudioDevices() {
@@ -471,7 +511,7 @@
       }
     };
 
-    [cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = true);
+    [cueVocab, cuePronun, cueGrammar, cueCorrect].forEach(btn => btn.disabled = true);
 
     // --- Recording Controls ---
     recordBtn.onclick = async () => {
@@ -516,7 +556,7 @@
         recordingStartTime = Date.now();
         recordBtn.disabled = true;
         stopBtn.disabled = false;
-        [cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = false);
+        [cueVocab, cuePronun, cueGrammar, cueCorrect].forEach(btn => btn.disabled = false);
 
       } catch (err) {
         alert('Failed to access or record audio. Please check your audio input device and permissions.\n\nIf you selected \"Stereo Mix\" or \"What U Hear\" and it does not appear or work, try restarting your browser or computer, or use a physical microphone.');
@@ -528,7 +568,7 @@
         mediaRecorder.stop();
         recordBtn.disabled = false;
         stopBtn.disabled = true;
-        [cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = true);
+        [cueVocab, cuePronun, cueGrammar, cueCorrect].forEach(btn => btn.disabled = true);
       }
     };
 
@@ -554,6 +594,7 @@
     cueVocab.onclick   = () => addCue('vocab');
     cuePronun.onclick  = () => addCue('pronun');
     cueGrammar.onclick = () => addCue('grammar');
+    cueCorrect.onclick = () => addCue('correct');
 
     // --- Cue Table Rendering (with grouping by category after saving) ---
     function updateCueTable() {
@@ -574,7 +615,7 @@
             const catTd = document.createElement('td');
             catTd.colSpan = 4;
             catTd.className = "cue-category-header";
-            catTd.textContent = cueTypeMap[type].label;
+            catTd.textContent = (type === "correct") ? "Positive/Correct" : cueTypeMap[type].label.toUpperCase();
             catTr.appendChild(catTd);
             cueTableBody.appendChild(catTr);
             group.forEach((cue, idx) => renderCueRow(cue, idx, true));
@@ -585,14 +626,27 @@
       function renderCueRow(cue, idx) {
         const tr = document.createElement('tr');
         const typeCell = document.createElement('td');
-        typeCell.innerHTML = `
-          <span class="cue-type-dot" style="background:${cueTypeMap[cue.type].color}"></span>
-          <span class="cue-type-label">${cueTypeMap[cue.type].label}</span>
-        `;
+        if (cue.type === "correct") {
+          typeCell.innerHTML = `
+            <span class="cue-type-dot cue-correct-dot"></span>
+            <span class="cue-type-label cue-correct-label">
+              <svg viewBox="0 0 20 20" fill="none" style="vertical-align:middle;position:relative;top:-2px;width:13px;height:13px;">
+                <path d="M5 10.5l4 4 6-8" stroke="#5ba95c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          `;
+        } else {
+          typeCell.innerHTML = `
+            <span class="cue-type-dot" style="background:${cueTypeMap[cue.type].color}"></span>
+            <span class="cue-type-label">${cueTypeMap[cue.type].label}</span>
+          `;
+        }
         tr.appendChild(typeCell);
+
         const timeCell = document.createElement('td');
         timeCell.textContent = cue.time.toFixed(2) + 's';
         tr.appendChild(timeCell);
+
         const noteCell = document.createElement('td');
         if (!isSessionSaved) {
           const textarea = document.createElement('textarea');
