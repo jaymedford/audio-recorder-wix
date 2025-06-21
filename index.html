@@ -241,10 +241,24 @@
         playBtn.textContent = '▶';
         playBtn.disabled = !audioUrl;
         playBtn.onclick = () => {
-          if(audioUrl) {
+          if (!audioUrl) return;
+          // Only set src if not already set
+          if (player.src !== audioUrl) {
             player.src = audioUrl;
-            player.currentTime = cue.time;
-            player.play();
+            player.load();
+          }
+          // Wait until the audio is seekable before setting currentTime and playing
+          const seekAndPlay = () => {
+            if (player.readyState >= 2) { // HAVE_CURRENT_DATA
+              player.currentTime = cue.time;
+              player.play();
+              player.removeEventListener('canplay', seekAndPlay);
+            }
+          };
+          if (player.readyState >= 2) {
+            seekAndPlay();
+          } else {
+            player.addEventListener('canplay', seekAndPlay);
           }
         };
         playCell.appendChild(playBtn);
