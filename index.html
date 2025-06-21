@@ -2,227 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Spiki Studio Recorder</title>
+  <title>Speaky Studio Recorder</title>
   <meta name="viewport" content="width=600">
   <style>
-    :root {
-      --bg: #f5f7fa;
-      --fg: #1a1a1a;
-      --card: #fff;
-      --border: #e0e5ed;
-      --cue-falsefriend: #ff9800;
-      --cue-vocab: #1976d2;
-      --cue-pronun: #43a047;
-      --cue-grammar: #7e57c2;
-      --btn-main: #eee;
-      --btn-main-txt: #222;
-      --cue-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      --focus: #00b0ff;
-    }
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: var(--bg);
-      color: var(--fg);
-      padding: 30px;
-      margin: 0;
-      min-height: 100vh;
-      transition: background 0.2s, color 0.2s;
-    }
-    .container {
-      max-width: 700px;
-      margin: 0 auto;
-      background: var(--card);
-      border-radius: 14px;
-      box-shadow: var(--cue-shadow);
-      padding: 32px 24px 36px 24px;
-      border: 1px solid var(--border);
-    }
-    h1 {
-      margin-top: 0;
-      font-size: 2.2em;
-      letter-spacing: 1px;
-      text-align: center;
-      margin-bottom: 22px;
-    }
-    .recorder-controls {
-      margin-bottom: 20px;
-      display: flex;
-      gap: 14px;
-      justify-content: center;
-    }
-    .main-btn {
-      padding: 12px 24px;
-      font-size: 18px;
-      border-radius: 7px;
-      border: none;
-      background: var(--btn-main);
-      color: var(--btn-main-txt);
-      cursor: pointer;
-      font-family: inherit;
-      font-weight: 500;
-      transition: background 0.18s, color 0.18s, box-shadow 0.13s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-      outline: none;
-    }
-    .main-btn[disabled] {
-      background: #ccc;
-      color: #888;
-      cursor: not-allowed;
-    }
-    .main-btn:focus-visible {
-      outline: 3px solid var(--focus);
-      outline-offset: 2px;
-    }
-    .audio-section {
-      display: flex;
-      justify-content: center;
-      margin: 18px 0 34px 0;
-    }
-    .add-cues {
-      text-align: center;
-      margin-bottom: 8px;
-    }
-    .cue-btn {
-      padding: 10px 16px;
-      margin: 0 8px 12px 0;
-      border: none;
-      border-radius: 7px;
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      font-family: inherit;
-      font-weight: 500;
-      transition: filter 0.18s, box-shadow 0.13s;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-      outline: none;
-      position: relative;
-    }
-    .cue-btn:focus-visible {
-      outline: 3px solid var(--focus);
-      outline-offset: 2px;
-      z-index: 1;
-    }
-    .cue-btn[disabled] {
-      opacity: 0.65;
-      cursor: not-allowed;
-    }
-    .cue-falsefriend { background: var(--cue-falsefriend);}
-    .cue-vocab       { background: var(--cue-vocab);}
-    .cue-pronun      { background: var(--cue-pronun);}
-    .cue-grammar     { background: var(--cue-grammar);}
-    .cue-btn i { margin-right: 7px; font-style: normal; font-size: 1.2em;}
-    .cue-btn kbd {
-      background: rgba(255,255,255,0.32);
-      border-radius: 4px;
-      font-size: 0.85em;
-      padding: 2px 5px;
-      margin-left: 7px;
-      font-family: inherit;
-      font-weight: 400;
-      border: 1px solid rgba(255,255,255,0.16);
-    }
-    .cue-list-table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      margin-top: 18px;
-      background: var(--card);
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 1px 8px rgba(0,0,0,0.03);
-    }
-    .cue-list-table th, .cue-list-table td {
-      padding: 12px 10px;
-      border-bottom: 1px solid var(--border);
-      text-align: left;
-    }
-    .cue-list-table th {
-      background: var(--bg);
-      font-size: 1em;
-      font-weight: 600;
-    }
-    .cue-type-dot {
-      display: inline-block;
-      width: 13px; height: 13px;
-      border-radius: 50%;
-      vertical-align: middle;
-      margin-right: 7px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-    }
-    .cue-note-input {
-      width: 99%; min-width: 84px; max-width: 350px;
-      font-size: 1em; border-radius: 5px; border: 1px solid var(--border);
-      padding: 5px 7px; background: #f8fafc; transition: border 0.17s;
-      resize: vertical;
-    }
-    .cue-note-input:focus {
-      outline: 2px solid var(--focus);
-      border: 1.5px solid var(--focus);
-    }
-    .cue-play-btn {
-      background: var(--cue-vocab);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      padding: 7px 16px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: filter 0.18s, box-shadow 0.15s;
+    /* ... Use your previous CSS styles here ... */
+    .cue-category-header {
+      background: #e3e9f7;
       font-weight: bold;
-      box-shadow: 0 1px 4px rgba(25, 118, 210, 0.07);
-      outline: none;
+      font-size: 1.07em;
+      letter-spacing: 1px;
+      padding: 13px 10px;
+      border-bottom: 2px solid #d0d8e6;
+      color: #444;
     }
-    .cue-play-btn:focus-visible {
-      outline: 3px solid var(--focus);
-      outline-offset: 2px;
-      z-index:1;
+    .dark .cue-category-header {
+      background: #23283a;
+      color: #e9eefa;
+      border-bottom: 2px solid #2c2f3a;
     }
-    .cue-play-btn:active { filter: brightness(0.9);}
-    .cue-play-btn[disabled] { opacity: 0.5; cursor: not-allowed;}
-    .session-actions {
-      margin-top: 26px; text-align: center;
-    }
-    .save-btn {
-      padding: 15px 34px; font-size: 20px; background: #43a047;
-      color: #fff; border-radius: 10px; border: none; cursor: pointer;
-      font-weight: bold; letter-spacing: 1px; margin-top: 14px;
-      transition: background 0.18s;
-      box-shadow: 0 2px 8px rgba(67, 160, 71, 0.10);
-    }
-    .save-btn:active { background: #357a38; }
-    .save-btn:focus-visible { outline: 3px solid var(--focus);}
-    .saved-msg { color: #4caf50; font-weight: bold; font-size: 17px; margin-left: 18px; }
-    /* Dark mode */
-    .dark {
-      --bg: #15171a;
-      --fg: #f7f8fa;
-      --card: #212528;
-      --border: #222326;
-      --btn-main: #23252b;
-      --btn-main-txt: #f7f8fa;
-      --cue-shadow: 0 2px 8px rgba(0,0,0,0.16);
-      --focus: #00b0ff;
-    }
-    .dark .cue-note-input { background: #191b1e; color: #f7f8fa; }
-    .dark .cue-list-table th { background: #191b1e; }
-    .dark .cue-list-table { box-shadow: 0 1px 8px rgba(0,0,0,0.18);}
-    .dark .cue-btn kbd { background: rgba(0,0,0,0.32); color: #fff;}
-    .dark .cue-play-btn { background: #1976d2;}
-    .dark .save-btn { background: #2e7d32; }
-    .dark .save-btn:active { background: #205723; }
-    /* Focus-visible for all buttons */
-    button:focus-visible, textarea:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-    @media (max-width: 800px) {
-      .container { padding: 12px 1vw 22px 1vw;}
-      .audio-section { margin-bottom: 20px;}
-      .cue-list-table th, .cue-list-table td { font-size: 14px; padding: 7px 3px;}
-      .main-btn, .save-btn { font-size: 15px; padding: 8px 13px;}
-    }
+    /* add any other styles from the version you use */
   </style>
 </head>
 <body>
+  <!-- ... The rest of your structure (controls, audio, buttons) ... -->
   <div class="container" role="main">
     <h1>Speaky Studio Recorder</h1>
     <div class="recorder-controls" aria-label="Recording controls">
@@ -231,11 +33,9 @@
       <button id="playAllBtn" class="main-btn" aria-label="Play All" disabled tabindex="0">Play All</button>
       <button id="themeToggle" class="main-btn" aria-label="Toggle dark mode" title="Toggle dark mode" tabindex="0">🌙</button>
     </div>
-
     <div class="audio-section">
       <audio id="player" controls style="width:100%; max-width:350px; display:none;" aria-label="Session audio"></audio>
     </div>
-
     <div class="add-cues">
       <strong>Add a Cue:</strong><br>
       <button class="cue-btn cue-falsefriend" id="cueFalseFriend" title="Mark a False Friend (F)" aria-label="Add False Friend cue (F)" tabindex="0">
@@ -251,7 +51,6 @@
         <i>✍️</i> Grammar<kbd>G</kbd>
       </button>
     </div>
-
     <table class="cue-list-table" id="cueTable" style="display:none;" aria-label="Cues table">
       <thead>
         <tr>
@@ -263,62 +62,14 @@
       </thead>
       <tbody></tbody>
     </table>
-
     <div class="session-actions">
       <button class="save-btn" id="saveSessionBtn" style="display:none;" aria-label="Save Session">Save Session</button>
       <span id="savedMsg" class="saved-msg" style="display:none;">Session saved!</span>
     </div>
   </div>
-
   <script>
-    // Accessibility: Focus visible polyfill for browsers that don't support :focus-visible natively
-    (function() {
-      function handleFirstTab(e) {
-        if (e.key === "Tab") {
-          document.body.classList.add("user-is-tabbing");
-          window.removeEventListener("keydown", handleFirstTab);
-        }
-      }
-      window.addEventListener("keydown", handleFirstTab);
-    })();
-
-    // Theme toggling
-    const themeToggle = document.getElementById('themeToggle');
-    let isDark = false;
-    function setTheme(dark) {
-      if (dark) {
-        document.body.classList.add('dark');
-        themeToggle.textContent = '☀️';
-        themeToggle.setAttribute('aria-label', 'Toggle light mode');
-      } else {
-        document.body.classList.remove('dark');
-        themeToggle.textContent = '🌙';
-        themeToggle.setAttribute('aria-label', 'Toggle dark mode');
-      }
-      isDark = dark;
-      localStorage.setItem("speaky-theme", dark ? "dark" : "light");
-    }
-    themeToggle.onclick = () => setTheme(!isDark);
-    // Load theme from storage
-    setTheme(localStorage.getItem("speaky-theme") === "dark");
-
-    // -- Recorder State --
-    let mediaRecorder, audioChunks = [], audioUrl = null, cues = [], recordingStartTime = 0, isSessionSaved = false;
-
-    const recordBtn = document.getElementById('recordBtn');
-    const stopBtn = document.getElementById('stopBtn');
-    const playAllBtn = document.getElementById('playAllBtn');
-    const cueFalseFriend = document.getElementById('cueFalseFriend');
-    const cueVocab = document.getElementById('cueVocab');
-    const cuePronun = document.getElementById('cuePronun');
-    const cueGrammar = document.getElementById('cueGrammar');
-    const player = document.getElementById('player');
-    const cueTable = document.getElementById('cueTable');
-    const cueTableBody = cueTable.querySelector('tbody');
-    const saveSessionBtn = document.getElementById('saveSessionBtn');
-    const savedMsg = document.getElementById('savedMsg');
-
-    // Type map for color and icon
+    // -- Cue type order and map --
+    const cueTypeOrder = ['vocab','falsefriend','pronun','grammar'];
     const cueTypeMap = {
       falsefriend: {label:'False Friend', color:'#ff9800', icon:'🤔'},
       vocab:       {label:'Vocabulary',   color:'#1976d2', icon:'📖'},
@@ -326,144 +77,12 @@
       grammar:     {label:'Grammar',      color:'#7e57c2', icon:'✍️'}
     };
 
-    // Accessibility: Focus style for all interactive elements
-    function addFocusVisiblePolyfill() {
-      document.body.addEventListener('mousedown', function(e){
-        document.body.classList.remove('user-is-tabbing');
-      });
-      document.body.addEventListener('keydown', function(e){
-        if(e.key === 'Tab') document.body.classList.add('user-is-tabbing');
-      });
-    }
-    addFocusVisiblePolyfill();
+    // ... (rest of your setup and state: theme, buttons, etc.)
 
-    // Disable cue buttons initially
-    [cueFalseFriend, cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = true);
+    let mediaRecorder, audioChunks = [], audioUrl = null, cues = [], recordingStartTime = 0, isSessionSaved = false;
+    // ... (button queries, theme toggling, etc.)
 
-    // -- Recording Controls --
-
-    recordBtn.onclick = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        audioChunks = [];
-        cues = [];
-        audioUrl = null;
-        isSessionSaved = false;
-        updateCueTable();
-        player.style.display = 'none';
-        playAllBtn.disabled = true;
-        saveSessionBtn.style.display = 'none';
-        savedMsg.style.display = 'none';
-
-        mediaRecorder.ondataavailable = event => {
-          if (event.data.size > 0) audioChunks.push(event.data);
-        };
-
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(audioChunks, { type: 'audio/webm' });
-          audioUrl = URL.createObjectURL(blob);
-          player.src = audioUrl;
-          player.style.display = '';
-          playAllBtn.disabled = false;
-          saveSessionBtn.style.display = '';
-        };
-
-        mediaRecorder.start();
-        recordingStartTime = Date.now();
-        recordBtn.disabled = true;
-        stopBtn.disabled = false;
-        [cueFalseFriend, cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = false);
-
-      } catch (err) {
-        alert('Microphone access is required to record audio.');
-      }
-    };
-
-    stopBtn.onclick = () => {
-      mediaRecorder.stop();
-      recordBtn.disabled = false;
-      stopBtn.disabled = true;
-      [cueFalseFriend, cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = true);
-    };
-
-    playAllBtn.onclick = () => {
-      if(audioUrl) {
-        player.src = audioUrl;
-        player.play();
-      }
-    };
-
-    // -- Cue Buttons Handlers --
-
-    function addCue(type) {
-      if (!mediaRecorder || mediaRecorder.state !== 'recording') return;
-      const now = Date.now();
-      const cueTime = (now - recordingStartTime) / 1000;
-      cues.push({
-        type,
-        time: cueTime,
-        note: ''
-      });
-      updateCueTable();
-    }
-
-    cueFalseFriend.onclick = () => addCue('falsefriend');
-    cueVocab.onclick       = () => addCue('vocab');
-    cuePronun.onclick      = () => addCue('pronun');
-    cueGrammar.onclick     = () => addCue('grammar');
-
-    // -- Keyboard Shortcuts for cues and controls --
-    document.addEventListener('keydown', e => {
-      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
-      if (e.ctrlKey || e.altKey || e.metaKey) return;
-      if (recordBtn.disabled === false && (e.code === "Space" || e.key === " ")) {
-        e.preventDefault();
-        recordBtn.focus();
-        recordBtn.click();
-        return;
-      }
-      if (stopBtn.disabled === false && (e.code === "Enter" || e.key === "Enter")) {
-        e.preventDefault();
-        stopBtn.focus();
-        stopBtn.click();
-        return;
-      }
-      // Cue buttons
-      if (!cueFalseFriend.disabled && (e.key === "f" || e.key === "F")) {
-        e.preventDefault();
-        cueFalseFriend.focus();
-        cueFalseFriend.click();
-        return;
-      }
-      if (!cueVocab.disabled && (e.key === "v" || e.key === "V")) {
-        e.preventDefault();
-        cueVocab.focus();
-        cueVocab.click();
-        return;
-      }
-      if (!cuePronun.disabled && (e.key === "p" || e.key === "P")) {
-        e.preventDefault();
-        cuePronun.focus();
-        cuePronun.click();
-        return;
-      }
-      if (!cueGrammar.disabled && (e.key === "g" || e.key === "G")) {
-        e.preventDefault();
-        cueGrammar.focus();
-        cueGrammar.click();
-        return;
-      }
-      // Theme toggle with D
-      if (e.key === "d" || e.key === "D") {
-        themeToggle.focus();
-        themeToggle.click();
-        return;
-      }
-    });
-
-    // -- Cue Table Rendering --
-
+    // --- GROUPED TABLE RENDERING ---
     function updateCueTable() {
       cueTableBody.innerHTML = '';
       if (cues.length === 0) {
@@ -471,123 +90,119 @@
         return;
       }
       cueTable.style.display = '';
-      cues.forEach((cue, idx) => {
-        const tr = document.createElement('tr');
 
-        // Type cell with color dot & icon
-        const typeCell = document.createElement('td');
-        typeCell.innerHTML = `
-          <span class="cue-type-dot" style="background:${cueTypeMap[cue.type].color}"></span>
-          <span title="${cueTypeMap[cue.type].label}">${cueTypeMap[cue.type].icon}</span>
-          <span> ${cueTypeMap[cue.type].label}</span>
-        `;
-        tr.appendChild(typeCell);
+      if (!isSessionSaved) {
+        // Before saving: show cues in the order they were added
+        cues.forEach((cue, idx) => cueTableBody.appendChild(renderCueRow(cue, idx)));
+      } else {
+        // After saving: group cues by type, in the defined order
+        cueTypeOrder.forEach(type => {
+          const group = cues.filter(c => c.type === type);
+          if (group.length > 0) {
+            // Add a row as a header for the category
+            const catTr = document.createElement('tr');
+            const catTd = document.createElement('td');
+            catTd.colSpan = 4;
+            catTd.className = "cue-category-header";
+            catTd.textContent = cueTypeMap[type].label;
+            catTr.appendChild(catTd);
+            cueTableBody.appendChild(catTr);
 
-        // Time cell
-        const timeCell = document.createElement('td');
-        timeCell.textContent = cue.time.toFixed(2) + 's';
-        tr.appendChild(timeCell);
-
-        // Notes cell
-        const noteCell = document.createElement('td');
-        if (!isSessionSaved) {
-          const textarea = document.createElement('textarea');
-          textarea.className = 'cue-note-input';
-          textarea.rows = 1;
-          textarea.placeholder = "Type notes (optional)...";
-          textarea.value = cue.note;
-          textarea.setAttribute('aria-label', `Notes for ${cueTypeMap[cue.type].label} at ${cue.time.toFixed(2)}s`);
-          textarea.oninput = (e) => {
-            cues[idx].note = e.target.value;
-          };
-          noteCell.appendChild(textarea);
-        } else {
-          noteCell.textContent = cue.note || '—';
-        }
-        tr.appendChild(noteCell);
-
-        // Play cue cell (with custom playback window)
-        const playCell = document.createElement('td');
-        const playBtn = document.createElement('button');
-        playBtn.className = 'cue-play-btn';
-        playBtn.textContent = '▶';
-        playBtn.type = "button";
-        playBtn.setAttribute('aria-label', `Play ${cueTypeMap[cue.type].label} cue from 8s before to 2s after`);
-        playBtn.disabled = !audioUrl;
-        playBtn.onclick = () => {
-          if (!audioUrl) return;
-          let start = Math.max(0, cue.time - 8);
-          let end = cue.time + 2; // Change to +3 for 3 seconds after
-
-          // Only set src if not already set
-          if (player.src !== audioUrl) {
-            player.src = audioUrl;
-            player.load();
+            group.forEach((cue, idx) => cueTableBody.appendChild(renderCueRow(cue, idx, true)));
           }
-
-          // Remove previous listeners to prevent stacking
-          player.onended = null;
-          player.ontimeupdate = null;
-
-          // Handler to stop at the right time
-          function stopAtEnd() {
-            if (player.currentTime >= end) {
-              player.pause();
-              player.ontimeupdate = null;
-            }
-          }
-
-          // Seek and play when ready
-          const seekAndPlay = () => {
-            if (player.readyState >= 2) { // HAVE_CURRENT_DATA
-              player.currentTime = start;
-              player.play();
-              player.ontimeupdate = stopAtEnd;
-              player.removeEventListener('canplay', seekAndPlay);
-            }
-          };
-          if (player.readyState >= 2) {
-            seekAndPlay();
-          } else {
-            player.addEventListener('canplay', seekAndPlay);
-          }
-        };
-        playCell.appendChild(playBtn);
-        tr.appendChild(playCell);
-
-        cueTableBody.appendChild(tr);
-      });
+        });
+      }
     }
 
-    // -- Save Session Handler --
+    function renderCueRow(cue, idx, isGrouped=false) {
+      const tr = document.createElement('tr');
+      // Type
+      const typeCell = document.createElement('td');
+      typeCell.innerHTML = `<span class="cue-type-dot" style="background:${cueTypeMap[cue.type].color}"></span>
+        <span title="${cueTypeMap[cue.type].label}">${cueTypeMap[cue.type].icon}</span>
+        <span> ${cueTypeMap[cue.type].label}</span>`;
+      tr.appendChild(typeCell);
 
+      // Time
+      const timeCell = document.createElement('td');
+      timeCell.textContent = cue.time.toFixed(2) + 's';
+      tr.appendChild(timeCell);
+
+      // Notes
+      const noteCell = document.createElement('td');
+      if (!isSessionSaved) {
+        const textarea = document.createElement('textarea');
+        textarea.className = 'cue-note-input';
+        textarea.rows = 1;
+        textarea.placeholder = "Type notes (optional)...";
+        textarea.value = cue.note;
+        textarea.setAttribute('aria-label', `Notes for ${cueTypeMap[cue.type].label} at ${cue.time.toFixed(2)}s`);
+        textarea.oninput = (e) => {
+          cues[idx].note = e.target.value;
+        };
+        noteCell.appendChild(textarea);
+      } else {
+        noteCell.textContent = cue.note || '—';
+      }
+      tr.appendChild(noteCell);
+
+      // Play
+      const playCell = document.createElement('td');
+      const playBtn = document.createElement('button');
+      playBtn.className = 'cue-play-btn';
+      playBtn.textContent = '▶';
+      playBtn.type = "button";
+      playBtn.setAttribute('aria-label', `Play ${cueTypeMap[cue.type].label} cue from 8s before to 2s after`);
+      playBtn.disabled = !audioUrl;
+      playBtn.onclick = () => {
+        if (!audioUrl) return;
+        let start = Math.max(0, cue.time - 8);
+        let end = cue.time + 2;
+        if (player.src !== audioUrl) {
+          player.src = audioUrl;
+          player.load();
+        }
+        player.onended = null;
+        player.ontimeupdate = null;
+        function stopAtEnd() {
+          if (player.currentTime >= end) {
+            player.pause();
+            player.ontimeupdate = null;
+          }
+        }
+        const seekAndPlay = () => {
+          if (player.readyState >= 2) {
+            player.currentTime = start;
+            player.play();
+            player.ontimeupdate = stopAtEnd;
+            player.removeEventListener('canplay', seekAndPlay);
+          }
+        };
+        if (player.readyState >= 2) {
+          seekAndPlay();
+        } else {
+          player.addEventListener('canplay', seekAndPlay);
+        }
+      };
+      playCell.appendChild(playBtn);
+      tr.appendChild(playCell);
+
+      return tr;
+    }
+
+    // ... The rest of your session logic, event handlers, etc. ...
+
+    // On save, switch to grouped view
     saveSessionBtn.onclick = async () => {
       if (!audioUrl || isSessionSaved) return;
-      // Disable editing
       isSessionSaved = true;
       updateCueTable();
-
-      // Prepare audio blob and cues for upload
-      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-
-      // --- TODO: Integrate with Wix Velo for saving ---
-      // Example: Use Wix Data API to upload audioBlob and cues array (as JSON) to your database.
-      // See: https://www.wix.com/velo/reference/wix-data and https://www.wix.com/velo/reference/wix-media-backend/upload
-      // You would typically use wix-data.insert() for cues+notes, and wix-media-backend/upload to store the audio file.
-      // Pass audioBlob and cues to your backend accordingly.
-      // For now, just show saved message.
-
+      // ... your save logic ...
       savedMsg.style.display = '';
       saveSessionBtn.disabled = true;
     };
 
-    // -- Reset Save Message on new recordings --
-    recordBtn.addEventListener('click', () => {
-      saveSessionBtn.disabled = false;
-      savedMsg.style.display = 'none';
-    });
-
-    // -- Initial UI update --
+    // ... rest of your script (keyboard shortcuts etc.) ...
     updateCueTable();
   </script>
 </body>
