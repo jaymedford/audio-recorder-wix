@@ -2,111 +2,306 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Speaky Studio Recorder</title>
-  <meta name="viewport" content="width=600">
+  <title>SPIKI Studio Recorder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Google Fonts for professional look -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; color: #222; padding: 30px; }
-    .recorder-controls { margin-bottom: 20px; }
+    :root {
+      --primary: #0050b3;
+      --primary-light: #e6f2ff;
+      --accent: #43a047;
+      --danger: #ff9800;
+      --background: #f5f7fa;
+      --surface: #ffffff;
+      --border: #e0e5ed;
+      --text: #222;
+      --muted: #888;
+      --shadow: 0 6px 32px 0 rgba(0,0,0,0.11);
+      --radius: 20px;
+      --input-radius: 8px;
+      --transition: 0.18s cubic-bezier(.4,0,.2,1);
+    }
+    html,body { height: 100%; margin: 0; padding: 0; }
+    body {
+      background: var(--background);
+      min-height: 100vh;
+      font-family: 'Inter', Arial, sans-serif;
+      color: var(--text);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+    .studio-wrapper {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 44px 40px 36px 40px;
+      max-width: 520px;
+      width: 100%;
+      margin: 48px auto;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      font-size: 2.6rem;
+      margin: 0 0 18px 0;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      color: var(--primary);
+      text-align: center;
+      text-shadow: 0 2px 8px rgba(0,80,179,0.06);
+    }
+    .subtitle {
+      font-size: 1.09rem;
+      color: var(--muted);
+      margin-bottom: 28px;
+      text-align: center;
+      letter-spacing: 0.4px;
+    }
+    .recorder-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 22px;
+      align-items: center;
+      width: 100%;
+    }
+    .device-select-label {
+      font-size: 1.02em;
+      margin-right: 8px;
+      font-weight: 500;
+      color: var(--primary);
+    }
+    .device-select {
+      font-size: 1em;
+      padding: 8px 14px;
+      border-radius: var(--input-radius);
+      border: 1px solid var(--border);
+      background: var(--primary-light);
+      color: var(--primary);
+      transition: border var(--transition);
+    }
+    .main-btn {
+      padding: 12px 28px;
+      font-size: 1.08rem;
+      border-radius: var(--input-radius);
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 2px 12px rgba(0,80,179,0.06);
+      cursor: pointer;
+      margin-bottom: 4px;
+      transition: background var(--transition), box-shadow var(--transition);
+    }
+    .main-btn[disabled] {
+      background: #b3c1d6;
+      color: #eee;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .main-btn:hover:not([disabled]) {
+      background: #003a75;
+      box-shadow: 0 4px 16px rgba(0,80,179,0.13);
+    }
+    .audio-section {
+      margin: 18px 0 30px 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    audio {
+      width: 100%;
+      max-width: 370px;
+      outline: none;
+      border-radius: 7px;
+      box-shadow: 0 1px 6px rgba(0,80,179,0.05);
+      background: #f3f7fb;
+    }
+    .cue-section {
+      width: 100%;
+      margin-bottom: 18px;
+    }
+    .cue-label {
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 1.09em;
+      margin-bottom: 7px;
+      display: block;
+    }
+    .cue-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
     .cue-btn {
-      padding: 10px 14px; margin: 0 6px 8px 0; border: none; border-radius: 6px; color: #fff; font-size: 16px; cursor: pointer;
-      display: inline-flex; align-items: center; font-family: inherit;
-      transition: filter 0.2s;
+      padding: 9px 17px;
+      border: none;
+      border-radius: 7px;
+      font-size: 1em;
+      font-weight: 500;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: filter var(--transition), box-shadow var(--transition);
+      background: var(--primary);
+      box-shadow: 0 1px 6px rgba(0,80,179,0.07);
+      outline: none;
     }
-    .cue-btn:active { filter: brightness(0.9); }
-    .cue-falsefriend { background: #ff9800; }
-    .cue-vocab       { background: #1976d2; }
-    .cue-pronun      { background: #43a047; }
-    .cue-grammar     { background: #7e57c2; }
-    .cue-btn i { margin-right: 6px; font-style: normal; }
-    .main-btn { padding: 12px 20px; font-size: 18px; margin-right: 10px; border-radius: 6px; border: none; background: #eee; color: #222; cursor: pointer; }
-    .main-btn[disabled] { background: #ccc; cursor: not-allowed; }
-    .audio-section { margin: 16px 0 32px 0; }
-    .cue-list-table { width: 100%; border-collapse: collapse; margin-top: 18px; background: #fff; border-radius: 8px; overflow: hidden; }
-    .cue-list-table th, .cue-list-table td { padding: 10px 8px; border-bottom: 1px solid #f0f0f0; text-align: left; }
-    .cue-list-table th { background: #f5f7fa; }
-    .cue-type-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 6px; }
-    .cue-note-input { width: 98%; min-width: 80px; max-width: 340px; }
+    .cue-btn[disabled] {
+      opacity: 0.60;
+      cursor: not-allowed;
+    }
+    .cue-btn i { margin-right: 7px; font-style: normal; font-size: 1.16em;}
+    .cue-btn.cue-falsefriend { background: var(--danger);}
+    .cue-btn.cue-vocab      { background: var(--primary);}
+    .cue-btn.cue-pronun     { background: var(--accent);}
+    .cue-btn.cue-grammar    { background: #7e57c2;}
+    .cue-btn:hover:not([disabled]) { filter: brightness(1.09);}
+    .cue-list-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 8px;
+      background: #fafdff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 14px rgba(0,80,179,0.05);
+      font-size: 1em;
+    }
+    .cue-list-table th, .cue-list-table td {
+      padding: 13px 11px;
+      border-bottom: 1px solid #e2e6f2;
+      text-align: left;
+    }
+    .cue-list-table th {
+      background: #eaf2fc;
+      font-size: 1.03em;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .cue-type-dot {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-right: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+    }
+    .cue-note-input {
+      width: 99%; min-width: 84px; max-width: 350px;
+      font-size: 1em; border-radius: 6px; border: 1px solid #c6d3e6;
+      padding: 6px 7px; background: #f6f8fd; transition: border var(--transition);
+      resize: vertical;
+      margin-top: 3px;
+    }
+    .cue-note-input:focus {
+      outline: 2px solid var(--primary);
+      border: 1.5px solid var(--primary);
+    }
     .cue-play-btn {
-      background: #1976d2; color: #fff; border: none; border-radius: 5px; padding: 5px 12px; font-size: 15px; cursor: pointer;
-      transition: filter 0.2s;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 7px 16px;
+      font-size: 1.05em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition), box-shadow var(--transition);
+      box-shadow: 0 1px 4px rgba(0,80,179,0.09);
+      outline: none;
     }
-    .cue-play-btn:active { filter: brightness(0.9);}
-    .session-actions { margin-top: 24px; }
-    .save-btn {
-      padding: 14px 30px; font-size: 19px; background: #43a047; color: #fff; border-radius: 8px; border: none; cursor: pointer;
-      font-weight: bold; letter-spacing: 1px; margin-top: 12px;
-      transition: background 0.2s;
-    }
-    .save-btn:active { background: #357a38; }
-    .saved-msg { color: #4caf50; font-weight: bold; font-size: 17px; margin-left: 18px; }
+    .cue-play-btn:hover:not([disabled]) { background: #003a75;}
+    .cue-play-btn[disabled] { opacity: 0.5; cursor: not-allowed;}
     .cue-category-header {
       background: #e3e9f7;
       font-weight: bold;
-      font-size: 1.07em;
+      font-size: 1.08em;
       letter-spacing: 1px;
-      padding: 13px 10px;
+      padding: 14px 10px;
       border-bottom: 2px solid #d0d8e6;
-      color: #444;
+      color: #0050b3;
     }
-    @media (max-width: 750px) {
-      .cue-list-table, .cue-list-table th, .cue-list-table td { font-size: 13px; }
-      .main-btn { font-size: 15px; padding: 9px 13px; }
-      .save-btn { font-size: 15px; padding: 10px 18px; }
+    .session-actions {
+      margin: 32px 0 8px 0;
+      width: 100%;
+      text-align: center;
     }
-    /* For device selector */
-    .device-select-label { font-size: 1em; margin-right: 10px; font-weight: 500; }
-    .device-select { font-size: 1em; padding: 6px 8px; margin-bottom: 16px; border-radius: 5px; border: 1px solid #bbb; }
+    .save-btn {
+      padding: 15px 42px; font-size: 1.18em; background: var(--accent);
+      color: #fff; border-radius: 13px; border: none; cursor: pointer;
+      font-weight: bold; letter-spacing: 1px; margin-top: 10px;
+      transition: background var(--transition);
+      box-shadow: 0 2px 12px rgba(67, 160, 71, 0.15);
+    }
+    .save-btn:hover:not([disabled]) { background: #2e7d32; }
+    .save-btn:active { background: #205723; }
+    .save-btn[disabled] { background: #a6d4b0; color: #e0e5ed; }
+    .saved-msg { color: #43a047; font-weight: 600; font-size: 18px; margin-left: 18px; }
+    @media (max-width:600px) {
+      .studio-wrapper { max-width: 98vw; padding: 19px 2vw 18px 2vw;}
+      .cue-list-table th, .cue-list-table td { font-size: 0.98em; padding: 7px 2vw;}
+      .main-btn, .save-btn { font-size: 1em; padding: 8px 13px;}
+      h1 { font-size: 2em; }
+    }
   </style>
 </head>
 <body>
-  <h1>Speaky Studio Recorder</h1>
-  <div class="recorder-controls">
-    <label class="device-select-label" for="audioSource">Audio Input:</label>
-    <select id="audioSource" class="device-select"></select>
-    <button id="recordBtn" class="main-btn">Record</button>
-    <button id="stopBtn" class="main-btn" disabled>Stop</button>
-    <button id="playAllBtn" class="main-btn" disabled>Play All</button>
+  <div class="studio-wrapper">
+    <h1>SPIKI Studio</h1>
+    <div class="subtitle">Professional Session Recorder &amp; Feedback Cues</div>
+    <form class="recorder-controls" onsubmit="return false;">
+      <label class="device-select-label" for="audioSource">Audio Input:</label>
+      <select id="audioSource" class="device-select"></select>
+      <button id="recordBtn" class="main-btn" type="button">Record</button>
+      <button id="stopBtn" class="main-btn" type="button" disabled>Stop</button>
+      <button id="playAllBtn" class="main-btn" type="button" disabled>Play All</button>
+    </form>
+    <div class="audio-section">
+      <audio id="player" controls style="display:none;"></audio>
+    </div>
+    <div class="cue-section">
+      <span class="cue-label">Add a Cue:</span>
+      <div class="cue-btn-group">
+        <button class="cue-btn cue-falsefriend" id="cueFalseFriend" title="Mark a False Friend" type="button">
+          <i>🤔</i> False Friend
+        </button>
+        <button class="cue-btn cue-vocab" id="cueVocab" title="Mark a Vocabulary Opportunity" type="button">
+          <i>📖</i> Vocabulary
+        </button>
+        <button class="cue-btn cue-pronun" id="cuePronun" title="Mark a Pronunciation Opportunity" type="button">
+          <i>🗣️</i> Pronunciation
+        </button>
+        <button class="cue-btn cue-grammar" id="cueGrammar" title="Mark a Grammar Opportunity" type="button">
+          <i>✍️</i> Grammar
+        </button>
+      </div>
+    </div>
+    <table class="cue-list-table" id="cueTable" style="display:none;">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Time</th>
+          <th>Notes</th>
+          <th>Play</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="session-actions">
+      <button class="save-btn" id="saveSessionBtn" style="display:none;">Save Session</button>
+      <span id="savedMsg" class="saved-msg" style="display:none;">Session saved!</span>
+    </div>
   </div>
-
-  <div class="audio-section">
-    <audio id="player" controls style="width:100%; max-width:340px; display:none;"></audio>
-  </div>
-
-  <div>
-    <strong>Add a Cue:</strong><br>
-    <button class="cue-btn cue-falsefriend" id="cueFalseFriend" title="Mark a False Friend">
-      <i>🤔</i> False Friend
-    </button>
-    <button class="cue-btn cue-vocab" id="cueVocab" title="Mark a Vocabulary Opportunity">
-      <i>📖</i> Vocabulary
-    </button>
-    <button class="cue-btn cue-pronun" id="cuePronun" title="Mark a Pronunciation Opportunity">
-      <i>🗣️</i> Pronunciation
-    </button>
-    <button class="cue-btn cue-grammar" id="cueGrammar" title="Mark a Grammar Opportunity">
-      <i>✍️</i> Grammar
-    </button>
-  </div>
-
-  <table class="cue-list-table" id="cueTable" style="display:none;">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Time</th>
-        <th>Notes</th>
-        <th>Play</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <div class="session-actions">
-    <button class="save-btn" id="saveSessionBtn" style="display:none;">Save Session</button>
-    <span id="savedMsg" class="saved-msg" style="display:none;">Session saved!</span>
-  </div>
-
   <script>
-    // -- Recorder State --
+    // --- State and UI Elements ---
     let mediaRecorder, audioChunks = [], audioUrl = null, cues = [], recordingStartTime = 0, isSessionSaved = false, currentStream = null;
 
     const recordBtn = document.getElementById('recordBtn');
@@ -123,53 +318,53 @@
     const savedMsg = document.getElementById('savedMsg');
     const audioSource = document.getElementById('audioSource');
 
-    // Type map for color and icon
+    // -- Cue Type Map and Order --
     const cueTypeMap = {
       falsefriend: {label:'False Friend', color:'#ff9800', icon:'🤔'},
       vocab:       {label:'Vocabulary',   color:'#1976d2', icon:'📖'},
       pronun:      {label:'Pronunciation',color:'#43a047', icon:'🗣️'},
       grammar:     {label:'Grammar',      color:'#7e57c2', icon:'✍️'}
     };
-
-    // Order for grouped display after saving
     const cueTypeOrder = ['vocab','falsefriend','pronun','grammar'];
 
-    // Populate device selector
+    // -- Device Selector Logic --
     async function populateAudioDevices() {
-      audioSource.innerHTML = "";
       try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const inputs = devices.filter(d => d.kind === 'audioinput');
-        inputs.forEach(device => {
-          const opt = document.createElement('option');
-          opt.value = device.deviceId;
-          opt.text = device.label || `Microphone (${audioSource.length + 1})`;
-          audioSource.appendChild(opt);
-        });
-      } catch (e) {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (e) {}
+      audioSource.innerHTML = "";
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const inputs = devices.filter(d => d.kind === 'audioinput');
+      inputs.forEach(device => {
         const opt = document.createElement('option');
-        opt.value = "";
-        opt.text = "Microphone";
+        opt.value = device.deviceId;
+        opt.text = device.label || `Microphone (${audioSource.length + 1})`;
         audioSource.appendChild(opt);
-      }
+      });
     }
     populateAudioDevices();
     navigator.mediaDevices.addEventListener('devicechange', populateAudioDevices);
 
-    // Disable cue buttons initially
+    audioSource.onchange = () => {
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        currentStream = null;
+      }
+    };
+
+    // -- Disable cue buttons initially
     [cueFalseFriend, cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = true);
 
     // -- Recording Controls --
-
     recordBtn.onclick = async () => {
       try {
-        // Stop previous stream if any
         if (currentStream) {
           currentStream.getTracks().forEach(track => track.stop());
           currentStream = null;
         }
         const deviceId = audioSource.value;
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: deviceId ? { deviceId } : true });
+        const constraints = deviceId ? { deviceId: { exact: deviceId } } : true;
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: constraints });
         currentStream = stream;
         mediaRecorder = new MediaRecorder(stream);
         audioChunks = [];
@@ -202,7 +397,7 @@
         [cueFalseFriend, cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = false);
 
       } catch (err) {
-        alert('Microphone access is required to record audio.');
+        alert('Microphone access is required to record audio or your device is not available.');
       }
     };
 
@@ -223,7 +418,6 @@
     };
 
     // -- Cue Buttons Handlers --
-
     function addCue(type) {
       if (!mediaRecorder || mediaRecorder.state !== 'recording') return;
       const now = Date.now();
@@ -235,14 +429,12 @@
       });
       updateCueTable();
     }
-
     cueFalseFriend.onclick = () => addCue('falsefriend');
     cueVocab.onclick       = () => addCue('vocab');
     cuePronun.onclick      = () => addCue('pronun');
     cueGrammar.onclick     = () => addCue('grammar');
 
     // -- Cue Table Rendering (with grouping by category after saving) --
-
     function updateCueTable() {
       cueTableBody.innerHTML = '';
       if (cues.length === 0) {
@@ -254,11 +446,9 @@
       if (!isSessionSaved) {
         cues.forEach((cue, idx) => renderCueRow(cue, idx));
       } else {
-        // After saving, group cues by type, in the defined order
         cueTypeOrder.forEach(type => {
           const group = cues.filter(c => c.type === type);
           if (group.length > 0) {
-            // Add a row as a header for the category
             const catTr = document.createElement('tr');
             const catTd = document.createElement('td');
             catTd.colSpan = 4;
@@ -266,7 +456,6 @@
             catTd.textContent = cueTypeMap[type].label;
             catTr.appendChild(catTd);
             cueTableBody.appendChild(catTr);
-
             group.forEach((cue, idx) => renderCueRow(cue, idx, true));
           }
         });
@@ -274,8 +463,6 @@
 
       function renderCueRow(cue, idx) {
         const tr = document.createElement('tr');
-
-        // Type cell with color dot & icon
         const typeCell = document.createElement('td');
         typeCell.innerHTML = `
           <span class="cue-type-dot" style="background:${cueTypeMap[cue.type].color}"></span>
@@ -283,13 +470,9 @@
           <span> ${cueTypeMap[cue.type].label}</span>
         `;
         tr.appendChild(typeCell);
-
-        // Time cell
         const timeCell = document.createElement('td');
         timeCell.textContent = cue.time.toFixed(2) + 's';
         tr.appendChild(timeCell);
-
-        // Notes cell
         const noteCell = document.createElement('td');
         if (!isSessionSaved) {
           const textarea = document.createElement('textarea');
@@ -306,7 +489,6 @@
         }
         tr.appendChild(noteCell);
 
-        // Play cue cell
         const playCell = document.createElement('td');
         const playBtn = document.createElement('button');
         playBtn.className = 'cue-play-btn';
@@ -354,16 +536,12 @@
       if (!audioUrl || isSessionSaved) return;
       isSessionSaved = true;
       updateCueTable();
-
       // Prepare audio blob and cues for upload
-      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-      // --- TODO: Integrate with Wix Velo for saving ---
-
+      // const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
       savedMsg.style.display = '';
       saveSessionBtn.disabled = true;
     };
 
-    // -- Reset Save Message on new recordings --
     recordBtn.addEventListener('click', () => {
       saveSessionBtn.disabled = false;
       savedMsg.style.display = 'none';
