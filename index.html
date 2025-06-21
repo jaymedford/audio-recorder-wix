@@ -2,77 +2,63 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Audio Recorder with Cues</title>
+  <title>Simple Audio Recorder</title>
   <style>
-    body { font-family: Arial; padding: 16px; }
-    .cue-list { margin-top: 12px; }
-    .cue-btn { margin-left: 6px; }
-    button { margin-right: 6px; margin-bottom: 8px; }
+    body { font-family: Arial, sans-serif; padding: 16px; }
+    button { margin: 4px; }
   </style>
 </head>
 <body>
+  <h2>Audio Recorder</h2>
   <button id="recordBtn">Record</button>
   <button id="stopBtn" disabled>Stop</button>
-  <button id="cueBtn" disabled>Add Cue</button>
-  <br/>
-  <audio id="player" controls style="display:none"></audio>
-  <div class="cue-list" id="cueList"></div>
-
-  <!-- Recorder.js library (from CDN) -->
-  <script src="https://cdn.jsdelivr.net/npm/recorder-js@1.0.3/src/recorder.js"></script>
+  <button id="playBtn" disabled>Play</button>
+  <audio id="player" controls style="display:none; margin-top:12px;"></audio>
   <script>
-    let audioContext, recorder, audioBlob, startTime, cueTimes = [];
+    let mediaRecorder, audioChunks = [], audioUrl = null;
 
     const recordBtn = document.getElementById('recordBtn');
     const stopBtn = document.getElementById('stopBtn');
-    const cueBtn = document.getElementById('cueBtn');
+    const playBtn = document.getElementById('playBtn');
     const player = document.getElementById('player');
-    const cueList = document.getElementById('cueList');
 
-    function updateCueList() {
-      cueList.innerHTML = '<b>Cues:</b><br>';
-      cueTimes.forEach((t, idx) => {
-        cueList.innerHTML += 
-          `Cue ${idx+1}: ${t.toFixed(2)}s <button class="cue-btn" onclick="jumpToCue(${t})">Go</button><br>`;
-      });
-    }
-
-    window.jumpToCue = function(time) {
-      player.currentTime = time;
-      player.play();
-    }
-
-    recordBtn.onclick = async function() {
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    recordBtn.onclick = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      recorder = new Recorder(audioContext.createMediaStreamSource(stream));
-      recorder.record();
-      startTime = audioContext.currentTime;
-      cueTimes = [];
-      updateCueList();
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+      audioUrl = null;
+
+      mediaRecorder.ondataavailable = event => {
+        if (event.data.size > 0) audioChunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(audioChunks, { type: 'audio/webm' });
+        audioUrl = URL.createObjectURL(blob);
+        player.src = audioUrl;
+        player.style.display = '';
+        playBtn.disabled = false;
+      };
+
+      mediaRecorder.start();
       recordBtn.disabled = true;
       stopBtn.disabled = false;
-      cueBtn.disabled = false;
+      playBtn.disabled = true;
       player.style.display = 'none';
-    }
+    };
 
-    stopBtn.onclick = function() {
-      recorder.stop();
-      recorder.exportWAV(function(blob) {
-        audioBlob = blob;
-        player.src = URL.createObjectURL(blob);
-        player.style.display = '';
-      });
+    stopBtn.onclick = () => {
+      mediaRecorder.stop();
       recordBtn.disabled = false;
       stopBtn.disabled = true;
-      cueBtn.disabled = true;
-    }
+    };
 
-    cueBtn.onclick = function() {
-      const now = audioContext.currentTime;
-      cueTimes.push(now - startTime);
-      updateCueList();
-    }
+    playBtn.onclick = () => {
+      if(audioUrl) {
+        player.src = audioUrl;
+        player.play();
+      }
+    };
   </script>
 </body>
 </html>
