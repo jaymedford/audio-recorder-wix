@@ -4,16 +4,16 @@
   <meta charset="UTF-8">
   <title>SPIKI Studio Recorder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Fonts: DM Sans for UI, Inter for body, plus IBM Plex Sans Condensed for buttons -->
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Inter:wght@400;500;700&family=IBM+Plex+Sans+Condensed:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Fonts: Open Sans, Cabin Sketch for heading, IBM Plex Sans Condensed for buttons -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Cabin+Sketch:700|IBM+Plex+Sans+Condensed:500,700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #26282c;
+      --primary: #23272f;
       --accent: #4baf7a;
       --surface: #fff;
       --surface-alt: #f6f7f9;
       --border: #e5e7eb;
-      --text: #23272f;
+      --text: #22262c;
       --muted: #8d99a8;
       --cue-vocab: #595b60;
       --cue-pronun: #7a8b88;
@@ -24,9 +24,9 @@
       --input-radius: 6px;
       --shadow: 0 3.5px 18px 0 rgba(44,51,56,0.07);
       --transition: 0.16s cubic-bezier(.4,0,.2,1);
-      --font-ui: 'DM Sans', Arial, sans-serif;
+      --font-ui: 'Open Sans', Arial, sans-serif;
       --font-cond: 'IBM Plex Sans Condensed', Arial, sans-serif;
-      --font-body: 'Inter', Arial, sans-serif;
+      --font-head: 'Cabin Sketch', 'Open Sans', Arial, sans-serif;
       --table-head-bg: #f1f2f4;
       --cue-dot-size: 8px;
       --cue-btn-gap: 13px;
@@ -36,7 +36,7 @@
       margin: 0;
       padding: 0;
       background: var(--surface-alt);
-      font-family: var(--font-body);
+      font-family: var(--font-ui);
     }
     body {
       display: flex;
@@ -80,9 +80,9 @@
       max-width: 120px;
       object-fit: contain;
     }
-    h1 {
-      font-family: var(--font-ui);
-      font-size: 1.09rem;
+    h2.spiki-heading {
+      font-family: var(--font-head);
+      font-size: 1.6rem;
       margin: 0 0 6px 0;
       font-weight: 700;
       letter-spacing: 0.6px;
@@ -98,6 +98,58 @@
       text-align: center;
       letter-spacing: 0.20px;
       font-weight: 500;
+    }
+    .timer-row {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 7px;
+    }
+    .timer-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f4f5f7;
+      border-radius: 8px;
+      padding: 4px 18px;
+      font-size: 1.04em;
+      font-family: var(--font-cond);
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 2px;
+      user-select: none;
+      min-width: 140px;
+      justify-content: center;
+      border: 1px solid #ececec;
+      box-shadow: 0 1px 3px 0 rgba(44,51,56,0.05);
+    }
+    .timer-box.timer-warning {
+      background: #ffeec3;
+      color: #b28c0e;
+      border-color: #ffe19a;
+      animation: gentle-pulse 1s infinite alternate;
+    }
+    .timer-box.timer-danger {
+      background: #ffeaea;
+      color: #b22424;
+      border-color: #ffd6d6;
+      animation: danger-pulse 0.55s infinite alternate;
+    }
+    @keyframes gentle-pulse {
+      from { box-shadow: 0 0 3px 0 #ffe7aa; }
+      to   { box-shadow: 0 0 10px 2px #ffd87e; }
+    }
+    @keyframes danger-pulse {
+      from { box-shadow: 0 0 3px 0 #ffc4c4; }
+      to   { box-shadow: 0 0 13px 2px #ff9696; }
+    }
+    .timer-icon {
+      font-size: 1.15em;
+      margin-right: 5px;
+      position: relative;
+      top: 1.5px;
+      color: inherit;
     }
     .recorder-controls {
       display: flex;
@@ -289,7 +341,7 @@
       padding: 4px 6px;
       border-bottom: 1px solid #e5e7eb;
       text-align: left;
-      font-family: var(--font-body);
+      font-family: var(--font-ui);
       font-size: 0.84em;
     }
     .cue-list-table th {
@@ -317,7 +369,7 @@
       box-shadow: 0 0.5px 2px #5ba95c33;
     }
     .cue-type-label {
-      font-weight: 600;
+      font-weight: 700;
       font-family: var(--font-cond);
       font-size: 0.97em;
       letter-spacing: 0.01em;
@@ -331,7 +383,7 @@
       padding: 2px 4px; background: #f6f8fd; transition: border var(--transition);
       resize: vertical;
       margin-top: 0.5px;
-      font-family: var(--font-body);
+      font-family: var(--font-ui);
     }
     .cue-note-input:focus {
       outline: 1.5px solid var(--primary);
@@ -395,7 +447,7 @@
       .studio-wrapper { max-width: 99vw; padding: 4px 1vw 4px 1vw;}
       .cue-list-table th, .cue-list-table td { font-size: 0.79em; padding: 3px 2vw;}
       .main-btn, .save-btn { font-size: 0.83em; padding: 2px 7px;}
-      h1 { font-size: 0.97em; }
+      h2.spiki-heading { font-size: 1.1em; }
       .logo-holder img { max-width: 80px; height: 20px; }
     }
   </style>
@@ -405,7 +457,14 @@
     <div class="logo-holder">
       <img src="https://static.wixstatic.com/media/083adc_93c9141d93dd49b28eee10d3b3dfe013~mv2.png" alt="SPIKI Logo" />
     </div>
-    <h2 style="font-family: 'Cabin Sketch', 'Open Sans', Arial, sans-serif; font-weight:700; letter-spacing:0.5px;">SPIKI Studio</h2>
+    <h2 class="spiki-heading">SPIKI Studio</h2>
+    <div class="subtitle">Professional Session Recorder &amp; Feedback Cues</div>
+    <div class="timer-row">
+      <div id="timerBox" class="timer-box">
+        <span class="timer-icon">⏰</span>
+        <span id="timerText">00:00</span>
+      </div>
+    </div>
     <form class="recorder-controls" onsubmit="return false;">
       <label class="device-select-label" for="audioSource">Audio Input:</label>
       <select id="audioSource" class="device-select"></select>
@@ -446,8 +505,11 @@
   <div class="footer">
     &copy; 2025 SPIKI Studio &mdash; All rights reserved.
   </div>
+  <audio id="gentleAlarm" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfa348d.mp3" preload="auto"></audio>
+  <audio id="aggressiveAlarm" src="https://cdn.pixabay.com/audio/2022/03/15/audio_114b37b2dc.mp3" preload="auto"></audio>
   <script>
     let mediaRecorder, audioChunks = [], audioUrl = null, cues = [], recordingStartTime = 0, isSessionSaved = false, currentStream = null;
+    let timerInterval = null, timerStart = null, timerTriggered25 = false, timerTriggered30 = false;
 
     const recordBtn = document.getElementById('recordBtn');
     const stopBtn = document.getElementById('stopBtn');
@@ -462,6 +524,10 @@
     const saveSessionBtn = document.getElementById('saveSessionBtn');
     const savedMsg = document.getElementById('savedMsg');
     const audioSource = document.getElementById('audioSource');
+    const timerText = document.getElementById('timerText');
+    const timerBox = document.getElementById('timerBox');
+    const gentleAlarm = document.getElementById('gentleAlarm');
+    const aggressiveAlarm = document.getElementById('aggressiveAlarm');
 
     const cueTypeMap = {
       vocab:   {label:'vocab',      color:'#595b60'},
@@ -512,6 +578,46 @@
 
     [cueVocab, cuePronun, cueGrammar, cueCorrect].forEach(btn => btn.disabled = true);
 
+    // ===== TIMER LOGIC =====
+    function startTimer() {
+      timerStart = Date.now();
+      timerTriggered25 = false;
+      timerTriggered30 = false;
+      timerBox.className = "timer-box";
+      updateTimer();
+      timerInterval = setInterval(updateTimer, 1000);
+    }
+    function stopTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerBox.className = "timer-box";
+      timerText.textContent = "00:00";
+    }
+    function updateTimer() {
+      if (!timerStart) return;
+      const elapsed = Math.floor((Date.now() - timerStart) / 1000);
+      const min = Math.floor(elapsed / 60);
+      const sec = elapsed % 60;
+      timerText.textContent = (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
+      // Gentle alarm at 25 min, aggressive at 30 min
+      if (elapsed >= 25 * 60 && !timerTriggered25) {
+        timerBox.className = "timer-box timer-warning";
+        gentleAlarm.currentTime = 0;
+        gentleAlarm.play();
+        timerTriggered25 = true;
+      }
+      if (elapsed >= 30 * 60 && !timerTriggered30) {
+        timerBox.className = "timer-box timer-danger";
+        aggressiveAlarm.currentTime = 0;
+        aggressiveAlarm.play();
+        timerTriggered30 = true;
+      }
+      // Remove warning style if after 30 min
+      if (elapsed > 30 * 60) {
+        timerBox.className = "timer-box timer-danger";
+      }
+    }
+
     // --- Recording Controls ---
     recordBtn.onclick = async () => {
       try {
@@ -556,7 +662,7 @@
         recordBtn.disabled = true;
         stopBtn.disabled = false;
         [cueVocab, cuePronun, cueGrammar, cueCorrect].forEach(btn => btn.disabled = false);
-
+        startTimer();
       } catch (err) {
         alert('Failed to access or record audio. Please check your audio input device and permissions.\n\nIf you selected \"Stereo Mix\" or \"What U Hear\" and it does not appear or work, try restarting your browser or computer, or use a physical microphone.');
       }
@@ -568,6 +674,7 @@
         recordBtn.disabled = false;
         stopBtn.disabled = true;
         [cueVocab, cuePronun, cueGrammar, cueCorrect].forEach(btn => btn.disabled = true);
+        stopTimer();
       }
     };
 
@@ -719,6 +826,7 @@
 
     // --- Initial UI update ---
     updateCueTable();
+    stopTimer();
   </script>
 </body>
 </html>
