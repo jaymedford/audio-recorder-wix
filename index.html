@@ -4,265 +4,333 @@
   <meta charset="UTF-8">
   <title>SPIKI Studio Recorder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Modern Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Professional Fonts: Inter for body, DM Sans for UI -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #2551da;
+      --primary-dark: #1431a6;
+      --accent: #43a047;
+      --gray-bg: #f6f8fa;
+      --surface: #fff;
+      --border: #e1e7f0;
+      --text: #232d3c;
+      --muted: #8ca0b7;
+      --cue-vocab: #2551da;
+      --cue-pronun: #43a047;
+      --cue-grammar: #7e57c2;
+      --radius: 20px;
+      --input-radius: 9px;
+      --shadow: 0 6px 32px 0 rgba(37,81,218,0.06);
+      --transition: 0.18s cubic-bezier(.4,0,.2,1);
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: var(--gray-bg);
+      font-family: 'Inter', 'DM Sans', Arial, sans-serif;
+    }
     body {
-      background: radial-gradient(ellipse at 60% 40%, #e3ecff 0%, #f7fafc 60%, #f2f5fa 100%);
-      min-height: 100vh;
-      font-family: 'Inter', Arial, sans-serif;
-      color: #232d3c;
-      margin: 0; padding: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      min-height: 100vh;
     }
     .studio-wrapper {
-      background: #fff;
-      border-radius: 24px;
-      box-shadow: 0 10px 40px 0 rgba(0,60,150,0.12), 0 1.5px 8px 0 rgba(0,80,179,0.07);
-      padding: 48px 44px 36px 44px;
-      max-width: 480px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 46px 38px 30px 38px;
+      max-width: 420px;
       width: 100%;
-      margin: 36px auto 20px auto;
+      margin: 44px auto 16px auto;
       display: flex;
       flex-direction: column;
       align-items: center;
-      border: 1.5px solid #e3eaf5;
-      position: relative;
-      transition: box-shadow 0.24s;
+      border: 1.5px solid var(--border);
+      animation: fadeIn 0.7s cubic-bezier(.3,1.5,.5,1.1);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(35px) scale(0.97);}
+      to   { opacity: 1; transform: none;}
     }
     .logo-holder {
-      margin-bottom: 18px;
-      width: 90px; height: 90px;
-      display: flex; justify-content: center; align-items: center;
-      background: linear-gradient(135deg, #1667c2 60%, #4eb6ff 100%);
-      border-radius: 50%;
-      box-shadow: 0 4px 16px rgba(30,100,220,0.07);
-      padding: 10px;
+      margin-bottom: 16px;
+      width: 68px; height: 68px; display: flex; justify-content: center; align-items: center;
+      background: linear-gradient(135deg, #2551da 60%, #7ec2ff 100%);
+      border-radius: 50%; box-shadow: 0 4px 16px rgba(37,81,218,0.09);
+      padding: 6px; animation: popIn 0.8s cubic-bezier(.3,1.5,.5,1.1);
+    }
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.7);}
+      70% { opacity: 1; transform: scale(1.08);}
+      100% { opacity: 1; transform: scale(1);}
     }
     .logo-holder img {
-      max-width: 70px;
-      max-height: 70px;
-      border-radius: 16px;
+      max-width: 48px;
+      max-height: 48px;
+      border-radius: 10px;
       background: #fff;
       display: block;
+      filter: drop-shadow(0 2px 6px rgba(37,81,218,0.04));
     }
     h1 {
-      font-size: 2.4rem;
-      margin: 0 0 10px 0;
+      font-family: 'DM Sans', 'Inter', Arial, sans-serif;
+      font-size: 2rem;
+      margin: 0 0 8px 0;
       font-weight: 700;
       letter-spacing: 1.2px;
-      color: #1667c2;
+      color: var(--primary);
       text-align: center;
+      line-height: 1.12;
+      text-shadow: 0 1px 2px rgba(37,81,218,0.03);
     }
     .subtitle {
-      font-size: 1.01rem;
-      color: #6b7c92;
-      margin-bottom: 28px;
+      font-family: 'DM Sans', Arial, sans-serif;
+      font-size: 1.03rem;
+      color: var(--muted);
+      margin-bottom: 23px;
       text-align: center;
-      letter-spacing: 0.35px;
+      letter-spacing: 0.33px;
+      font-weight: 500;
     }
     .recorder-controls {
       display: flex;
       flex-wrap: wrap;
-      gap: 11px;
+      gap: 9px;
       justify-content: center;
-      margin-bottom: 26px;
+      margin-bottom: 20px;
       align-items: center;
       width: 100%;
     }
     .device-select-label {
-      font-size: 1.02em;
-      margin-right: 8px;
-      font-weight: 500;
-      color: #1856a8;
+      font-size: 1.01em;
+      margin-right: 7px;
+      font-weight: 600;
+      color: var(--primary);
       letter-spacing: 0.1px;
+      font-family: 'DM Sans', Arial, sans-serif;
     }
     .device-select {
-      font-size: 1em;
-      padding: 8px 14px;
-      border-radius: 9px;
-      border: 1.5px solid #d6e1f2;
-      background: #f0f6ff;
-      color: #1667c2;
-      transition: border 0.18s;
+      font-size: 0.98em;
+      font-family: 'DM Sans', Arial, sans-serif;
+      padding: 7px 13px;
+      border-radius: var(--input-radius);
+      border: 1.2px solid var(--border);
+      background: #f2f6ff;
+      color: var(--primary);
+      transition: border var(--transition), box-shadow var(--transition);
+      outline: none;
+      margin-right: 2px;
+    }
+    .device-select:focus {
+      border: 1.5px solid var(--primary);
+      box-shadow: 0 2px 10px rgba(37,81,218,0.13);
     }
     .main-btn {
-      padding: 12px 28px;
-      font-size: 1.08rem;
-      border-radius: 9px;
+      padding: 8px 18px;
+      font-size: 0.97rem;
+      border-radius: 7px;
       border: none;
-      background: linear-gradient(90deg, #1667c2 60%, #4eb6ff 100%);
+      font-family: 'DM Sans', Arial, sans-serif;
+      background: linear-gradient(90deg, #2551da 60%, #7ec2ff 100%);
       color: #fff;
-      font-weight: 600;
-      box-shadow: 0 2px 12px rgba(22,103,194,0.08);
+      font-weight: 700;
+      box-shadow: 0 1.5px 7px rgba(37,81,218,0.07);
       cursor: pointer;
-      margin-bottom: 4px;
-      transition: background 0.18s, box-shadow 0.18s;
+      margin-bottom: 2px;
+      letter-spacing: 0.02em;
+      transition: background var(--transition), box-shadow var(--transition), transform 0.13s;
+      outline: none;
     }
     .main-btn[disabled] {
       background: #b3c1d6;
       color: #eee;
       cursor: not-allowed;
       box-shadow: none;
+      opacity: 0.7;
+    }
+    .main-btn:active:not([disabled]) {
+      transform: scale(0.96);
     }
     .main-btn:hover:not([disabled]) {
-      background: linear-gradient(100deg, #1552a0 60%, #3ca4e1 100%);
-      box-shadow: 0 4px 16px rgba(22,103,194,0.11);
+      background: linear-gradient(100deg, #1431a6 60%, #5ea0ff 100%);
+      box-shadow: 0 2px 12px rgba(37,81,218,0.13);
     }
     .audio-section {
-      margin: 18px 0 32px 0;
+      margin: 14px 0 28px 0;
       width: 100%;
       display: flex;
       justify-content: center;
+      animation: fadeIn 0.7s 0.25s backwards;
     }
     audio {
       width: 100%;
-      max-width: 370px;
+      max-width: 320px;
       outline: none;
-      border-radius: 7px;
-      box-shadow: 0 1px 6px rgba(0,80,179,0.05);
+      border-radius: 6px;
+      box-shadow: 0 1px 6px rgba(37,81,218,0.07);
       background: #f3f7fb;
+      transition: box-shadow 0.16s;
     }
     .cue-section {
       width: 100%;
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
     .cue-label {
       font-weight: 700;
-      color: #1856a8;
-      font-size: 1.09em;
-      margin-bottom: 7px;
+      color: var(--primary-dark);
+      font-size: 1.01em;
+      margin-bottom: 5px;
       display: block;
+      font-family: 'DM Sans', Arial, sans-serif;
+      letter-spacing: 0.04em;
     }
     .cue-btn-group {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
       margin-bottom: 6px;
     }
     .cue-btn {
-      padding: 9px 17px;
+      padding: 6px 13px;
       border: none;
-      border-radius: 7px;
-      font-size: 1em;
+      border-radius: 6px;
+      font-size: 0.97em;
+      font-family: 'DM Sans', Arial, sans-serif;
       font-weight: 600;
       color: #fff;
       cursor: pointer;
       display: flex;
       align-items: center;
-      transition: filter 0.18s, box-shadow 0.18s;
-      background: #1667c2;
-      box-shadow: 0 1px 6px rgba(22,103,194,0.07);
+      background: var(--primary);
+      box-shadow: 0 1px 5px rgba(37,81,218,0.05);
       outline: none;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.02em;
+      transition: background 0.14s, transform 0.15s;
+      position: relative;
+      overflow: hidden;
     }
+    .cue-btn.cue-vocab      { background: var(--cue-vocab);}
+    .cue-btn.cue-pronun     { background: var(--cue-pronun);}
+    .cue-btn.cue-grammar    { background: var(--cue-grammar);}
     .cue-btn[disabled] {
-      opacity: 0.60;
+      opacity: 0.58;
       cursor: not-allowed;
     }
-    .cue-btn i { margin-right: 8px; font-style: normal; font-size: 1.16em;}
-    .cue-btn.cue-vocab      { background: #1667c2;}
-    .cue-btn.cue-pronun     { background: #43a047;}
-    .cue-btn.cue-grammar    { background: #7e57c2;}
+    .cue-btn:active:not([disabled]) {
+      transform: scale(0.94);
+    }
     .cue-btn:hover:not([disabled]) { filter: brightness(1.08);}
+    .cue-btn i { margin-right: 7px; font-style: normal; font-size: 1.13em;}
     .cue-list-table {
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      margin-top: 8px;
+      margin-top: 7px;
       background: #fafdff;
-      border-radius: 10px;
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 2px 14px rgba(22,103,194,0.06);
-      font-size: 1em;
+      box-shadow: 0 2px 14px rgba(37,81,218,0.04);
+      font-size: 0.99em;
+      animation: fadeIn 0.7s 0.15s backwards;
     }
     .cue-list-table th, .cue-list-table td {
-      padding: 13px 11px;
+      padding: 9px 9px;
       border-bottom: 1px solid #e2e6f2;
       text-align: left;
+      font-family: 'Inter', Arial, sans-serif;
     }
     .cue-list-table th {
       background: #eaf2fc;
-      font-size: 1.03em;
-      font-weight: 600;
-      color: #1667c2;
+      font-size: 1.01em;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.01em;
     }
     .cue-type-dot {
       display: inline-block;
-      width: 14px; height: 14px;
+      width: 11px; height: 11px;
       border-radius: 50%;
       vertical-align: middle;
-      margin-right: 8px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+      margin-right: 6px;
+      margin-left: 1px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
     }
     .cue-note-input {
-      width: 99%; min-width: 84px; max-width: 350px;
-      font-size: 1em; border-radius: 6px; border: 1px solid #c6d3e6;
-      padding: 6px 7px; background: #f6f8fd; transition: border 0.18s;
+      width: 98%; min-width: 74px; max-width: 228px;
+      font-size: 0.96em; border-radius: 5px; border: 1px solid #c6d3e6;
+      padding: 4px 7px; background: #f6f8fd; transition: border var(--transition);
       resize: vertical;
-      margin-top: 3px;
+      margin-top: 1.5px;
+      font-family: 'Inter', Arial, sans-serif;
     }
     .cue-note-input:focus {
-      outline: 2px solid #1667c2;
-      border: 1.5px solid #1667c2;
+      outline: 2px solid var(--primary);
+      border: 1.5px solid var(--primary);
     }
     .cue-play-btn {
-      background: #1667c2;
+      background: var(--primary);
       color: #fff;
       border: none;
-      border-radius: 7px;
-      padding: 7px 16px;
-      font-size: 1.05em;
-      font-weight: 600;
+      border-radius: 6px;
+      padding: 4px 11px;
+      font-size: 0.95em;
+      font-family: 'DM Sans', Arial, sans-serif;
+      font-weight: 700;
       cursor: pointer;
-      transition: background 0.18s, box-shadow 0.18s;
-      box-shadow: 0 1px 4px rgba(0,80,179,0.09);
+      transition: background 0.13s, box-shadow 0.13s, transform 0.14s;
+      box-shadow: 0 1px 4px rgba(37,81,218,0.07);
       outline: none;
+      margin: 0;
     }
-    .cue-play-btn:hover:not([disabled]) { background: #1552a0;}
-    .cue-play-btn[disabled] { opacity: 0.5; cursor: not-allowed;}
+    .cue-play-btn:hover:not([disabled]) { background: var(--primary-dark);}
+    .cue-play-btn:active:not([disabled]) { transform: scale(0.93);}
+    .cue-play-btn[disabled] { opacity: 0.39; cursor: not-allowed;}
     .cue-category-header {
       background: #e3e9f7;
       font-weight: bold;
-      font-size: 1.08em;
+      font-size: 1.06em;
       letter-spacing: 1px;
-      padding: 14px 10px;
+      padding: 11px 8px;
       border-bottom: 2px solid #d0d8e6;
-      color: #1667c2;
+      color: #2551da;
+      font-family: 'DM Sans', Arial, sans-serif;
     }
     .session-actions {
-      margin: 28px 0 4px 0;
+      margin: 19px 0 2px 0;
       width: 100%;
       text-align: center;
     }
     .save-btn {
-      padding: 15px 42px; font-size: 1.18em; background: #43a047;
-      color: #fff; border-radius: 13px; border: none; cursor: pointer;
-      font-weight: bold; letter-spacing: 1px; margin-top: 10px;
-      transition: background 0.18s;
-      box-shadow: 0 2px 12px rgba(67, 160, 71, 0.15);
+      padding: 8px 30px; font-size: 1.06em; background: var(--accent);
+      color: #fff; border-radius: 9px; border: none; cursor: pointer;
+      font-family: 'DM Sans', Arial, sans-serif;
+      font-weight: 700; letter-spacing: 0.01em; margin-top: 8px;
+      transition: background 0.2s, transform 0.13s;
+      box-shadow: 0 2px 8px rgba(67, 160, 71, 0.12);
     }
-    .save-btn:hover:not([disabled]) { background: #2e7d32; }
-    .save-btn:active { background: #205723; }
+    .save-btn:hover:not([disabled]) { background: #30752d; }
+    .save-btn:active { transform: scale(0.97);}
     .save-btn[disabled] { background: #a6d4b0; color: #e0e5ed; }
-    .saved-msg { color: #43a047; font-weight: 600; font-size: 18px; margin-left: 18px; }
+    .saved-msg { color: #43a047; font-weight: 600; font-size: 1em; margin-left: 13px; }
     .footer {
-      margin-top: 32px;
+      margin-top: 28px;
       color: #909caf;
-      font-size: 0.98em;
+      font-size: 0.96em;
       text-align: center;
       letter-spacing: 0.05em;
+      font-family: 'DM Sans', Arial, sans-serif;
     }
     @media (max-width:600px) {
-      .studio-wrapper { max-width: 99vw; padding: 18px 2vw 14px 2vw;}
-      .cue-list-table th, .cue-list-table td { font-size: 0.98em; padding: 7px 2vw;}
-      .main-btn, .save-btn { font-size: 1em; padding: 8px 13px;}
-      h1 { font-size: 1.45em; }
-      .logo-holder { width: 60px; height: 60px; }
-      .logo-holder img { max-width: 44px; max-height: 44px; }
+      .studio-wrapper { max-width: 99vw; padding: 15px 2vw 12px 2vw;}
+      .cue-list-table th, .cue-list-table td { font-size: 0.98em; padding: 6px 2vw;}
+      .main-btn, .save-btn { font-size: 0.97em; padding: 6px 10px;}
+      h1 { font-size: 1.25em; }
+      .logo-holder { width: 46px; height: 46px; }
+      .logo-holder img { max-width: 30px; max-height: 30px; }
     }
   </style>
 </head>
@@ -334,7 +402,7 @@
     const audioSource = document.getElementById('audioSource');
 
     const cueTypeMap = {
-      vocab:       {label:'Vocabulary',   color:'#1667c2', icon:'📖'},
+      vocab:       {label:'Vocabulary',   color:'#2551da', icon:'📖'},
       pronun:      {label:'Pronunciation',color:'#43a047', icon:'🗣️'},
       grammar:     {label:'Grammar',      color:'#7e57c2', icon:'✍️'}
     };
@@ -427,7 +495,7 @@
         [cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = false);
 
       } catch (err) {
-        alert('Failed to access or record audio. Please check your audio input device and permissions.\n\nIf you selected \"Stereo Mix\" or \"What U Hear\" and it does not appear or work, try restarting your browser or computer, or use a physical microphone.');
+        alert('Failed to access or record audio. Please check your audio input device and permissions.\n\nIf you selected "Stereo Mix" or "What U Hear" and it does not appear or work, try restarting your browser or computer, or use a physical microphone.');
       }
     };
 
