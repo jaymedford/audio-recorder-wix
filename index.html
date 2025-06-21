@@ -11,7 +11,6 @@
       --primary: #0050b3;
       --primary-light: #e6f2ff;
       --accent: #43a047;
-      --danger: #ff9800;
       --background: #f5f7fa;
       --surface: #ffffff;
       --border: #e0e5ed;
@@ -159,7 +158,6 @@
       cursor: not-allowed;
     }
     .cue-btn i { margin-right: 7px; font-style: normal; font-size: 1.16em;}
-    .cue-btn.cue-falsefriend { background: var(--danger);}
     .cue-btn.cue-vocab      { background: var(--primary);}
     .cue-btn.cue-pronun     { background: var(--accent);}
     .cue-btn.cue-grammar    { background: #7e57c2;}
@@ -270,9 +268,6 @@
     <div class="cue-section">
       <span class="cue-label">Add a Cue:</span>
       <div class="cue-btn-group">
-        <button class="cue-btn cue-falsefriend" id="cueFalseFriend" title="Mark a False Friend" type="button">
-          <i>🤔</i> False Friend
-        </button>
         <button class="cue-btn cue-vocab" id="cueVocab" title="Mark a Vocabulary Opportunity" type="button">
           <i>📖</i> Vocabulary
         </button>
@@ -301,13 +296,11 @@
     </div>
   </div>
   <script>
-    // --- State and UI Elements ---
     let mediaRecorder, audioChunks = [], audioUrl = null, cues = [], recordingStartTime = 0, isSessionSaved = false, currentStream = null;
 
     const recordBtn = document.getElementById('recordBtn');
     const stopBtn = document.getElementById('stopBtn');
     const playAllBtn = document.getElementById('playAllBtn');
-    const cueFalseFriend = document.getElementById('cueFalseFriend');
     const cueVocab = document.getElementById('cueVocab');
     const cuePronun = document.getElementById('cuePronun');
     const cueGrammar = document.getElementById('cueGrammar');
@@ -318,29 +311,41 @@
     const savedMsg = document.getElementById('savedMsg');
     const audioSource = document.getElementById('audioSource');
 
-    // -- Cue Type Map and Order --
     const cueTypeMap = {
-      falsefriend: {label:'False Friend', color:'#ff9800', icon:'🤔'},
       vocab:       {label:'Vocabulary',   color:'#1976d2', icon:'📖'},
       pronun:      {label:'Pronunciation',color:'#43a047', icon:'🗣️'},
       grammar:     {label:'Grammar',      color:'#7e57c2', icon:'✍️'}
     };
-    const cueTypeOrder = ['vocab','falsefriend','pronun','grammar'];
+    const cueTypeOrder = ['vocab','pronun','grammar'];
 
-    // -- Device Selector Logic --
+    // --- Device Selector Logic ---
     async function populateAudioDevices() {
       try {
         await navigator.mediaDevices.getUserMedia({ audio: true });
       } catch (e) {}
       audioSource.innerHTML = "";
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const inputs = devices.filter(d => d.kind === 'audioinput');
-      inputs.forEach(device => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const inputs = devices.filter(d => d.kind === 'audioinput');
+        if (inputs.length === 0) {
+          const opt = document.createElement('option');
+          opt.value = "";
+          opt.text = "No audio input found";
+          audioSource.appendChild(opt);
+        } else {
+          inputs.forEach(device => {
+            const opt = document.createElement('option');
+            opt.value = device.deviceId;
+            opt.text = device.label || `Microphone (${audioSource.length + 1})`;
+            audioSource.appendChild(opt);
+          });
+        }
+      } catch (e) {
         const opt = document.createElement('option');
-        opt.value = device.deviceId;
-        opt.text = device.label || `Microphone (${audioSource.length + 1})`;
+        opt.value = "";
+        opt.text = "Audio inputs unavailable";
         audioSource.appendChild(opt);
-      });
+      }
     }
     populateAudioDevices();
     navigator.mediaDevices.addEventListener('devicechange', populateAudioDevices);
@@ -352,10 +357,9 @@
       }
     };
 
-    // -- Disable cue buttons initially
-    [cueFalseFriend, cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = true);
+    [cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = true);
 
-    // -- Recording Controls --
+    // --- Recording Controls ---
     recordBtn.onclick = async () => {
       try {
         if (currentStream) {
@@ -363,7 +367,11 @@
           currentStream = null;
         }
         const deviceId = audioSource.value;
-        const constraints = deviceId ? { deviceId: { exact: deviceId } } : true;
+        if (!deviceId) {
+          alert('No audio input device selected.');
+          return;
+        }
+        const constraints = { deviceId: { exact: deviceId } };
         const stream = await navigator.mediaDevices.getUserMedia({ audio: constraints });
         currentStream = stream;
         mediaRecorder = new MediaRecorder(stream);
@@ -394,10 +402,10 @@
         recordingStartTime = Date.now();
         recordBtn.disabled = true;
         stopBtn.disabled = false;
-        [cueFalseFriend, cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = false);
+        [cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = false);
 
       } catch (err) {
-        alert('Microphone access is required to record audio or your device is not available.');
+        alert('Failed to access or record audio. Please check your audio input device and permissions.\n\nIf you selected "Stereo Mix" or "What U Hear" and it does not appear or work, try restarting your browser or computer, or use a physical microphone.');
       }
     };
 
@@ -406,7 +414,7 @@
         mediaRecorder.stop();
         recordBtn.disabled = false;
         stopBtn.disabled = true;
-        [cueFalseFriend, cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = true);
+        [cueVocab, cuePronun, cueGrammar].forEach(btn => btn.disabled = true);
       }
     };
 
@@ -417,7 +425,7 @@
       }
     };
 
-    // -- Cue Buttons Handlers --
+    // --- Cue Buttons Handlers ---
     function addCue(type) {
       if (!mediaRecorder || mediaRecorder.state !== 'recording') return;
       const now = Date.now();
@@ -429,12 +437,11 @@
       });
       updateCueTable();
     }
-    cueFalseFriend.onclick = () => addCue('falsefriend');
-    cueVocab.onclick       = () => addCue('vocab');
-    cuePronun.onclick      = () => addCue('pronun');
-    cueGrammar.onclick     = () => addCue('grammar');
+    cueVocab.onclick   = () => addCue('vocab');
+    cuePronun.onclick  = () => addCue('pronun');
+    cueGrammar.onclick = () => addCue('grammar');
 
-    // -- Cue Table Rendering (with grouping by category after saving) --
+    // --- Cue Table Rendering (with grouping by category after saving) ---
     function updateCueTable() {
       cueTableBody.innerHTML = '';
       if (cues.length === 0) {
@@ -531,13 +538,10 @@
       }
     }
 
-    // -- Save Session Handler --
     saveSessionBtn.onclick = async () => {
       if (!audioUrl || isSessionSaved) return;
       isSessionSaved = true;
       updateCueTable();
-      // Prepare audio blob and cues for upload
-      // const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
       savedMsg.style.display = '';
       saveSessionBtn.disabled = true;
     };
@@ -547,7 +551,7 @@
       savedMsg.style.display = 'none';
     });
 
-    // -- Initial UI update --
+    // --- Initial UI update ---
     updateCueTable();
   </script>
 </body>
